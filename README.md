@@ -2,6 +2,10 @@
 
 This repository holds the code for clustering survival data using the **<u>va</u>riational <u>de</u>ep <u>s</u>urvival <u>c</u>lustering (VaDeSC)** model.
 
+### How do I clone this repository?
+
+To clone this repo, please follow the instructions provided [here](https://github.com/ShoufaChen/clone-anonymous4open).
+
 ### Requirements
 
 All required libraries are included in the conda environment specified by `environment.yml`. To install and activate it, follow the instructions below:
