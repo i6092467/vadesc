@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# activate conda env
+eval "$(conda shell.bash hook)"
+conda activate Survival_Cluster_Analysis
+
+python ../main.py --data support --seed 42 --num_epochs 300 --weibull_shape 2 --eval-cal True
+python ../main.py --data support --seed 73 --num_epochs 300 --weibull_shape 2 --eval-cal True
+python ../main.py --data support --seed 666 --num_epochs 300 --weibull_shape 2 --eval-cal True
+python ../main.py --data support --seed 777 --num_epochs 300 --weibull_shape 2 --eval-cal True
+python ../main.py --data support --seed 1009 --num_epochs 300 --weibull_shape 2 --eval-cal True

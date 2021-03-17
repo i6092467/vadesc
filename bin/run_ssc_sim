@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# activate conda env
+eval "$(conda shell.bash hook)"
+conda activate Survival_Cluster_Analysis
+
+python ../main_ssc_bair.py --data sim --num_clusters 3 --clustering_dim 100 --seed 42
+python ../main_ssc_bair.py --data sim --num_clusters 3 --clustering_dim 100 --seed 73
+python ../main_ssc_bair.py --data sim --num_clusters 3 --clustering_dim 100 --seed 666
+python ../main_ssc_bair.py --data sim --num_clusters 3 --clustering_dim 100 --seed 777
+python ../main_ssc_bair.py --data sim --num_clusters 3 --clustering_dim 100 --seed 1009

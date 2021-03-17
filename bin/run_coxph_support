@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# activate conda env
+eval "$(conda shell.bash hook)"
+conda activate Survival_Cluster_Analysis
+
+python ../main_coxph.py --data support --seed 42 --penalty_weight 0.01
+python ../main_coxph.py --data support --seed 73 --penalty_weight 0.01
+python ../main_coxph.py --data support --seed 666 --penalty_weight 0.01
+python ../main_coxph.py --data support --seed 777 --penalty_weight 0.01
+python ../main_coxph.py --data support --seed 1009 --penalty_weight 0.01

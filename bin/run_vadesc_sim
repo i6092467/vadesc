@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+eval "$(conda shell.bash hook)"
+
+conda activate Survival_Cluster_Analysis
+
+python ../main.py --data sim --seed 42 --num_epochs 1000
+python ../main.py --data sim --seed 73 --num_epochs 1000
+python ../main.py --data sim --seed 666 --num_epochs 1000
+python ../main.py --data sim --seed 777 --num_epochs 1000
+python ../main.py --data sim --seed 1009 --num_epochs 1000

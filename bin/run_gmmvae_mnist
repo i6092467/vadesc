@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# activate conda env
+eval "$(conda shell.bash hook)"
+conda activate Survival_Cluster_Analysis
+
+python ../main.py --data mnist --seed 42 --no-survival --num_epochs 300
+python ../main.py --data mnist --seed 73 --no-survival --num_epochs 300
+python ../main.py --data mnist --seed 666 --no-survival --num_epochs 300
+python ../main.py --data mnist --seed 777 --no-survival --num_epochs 300
+python ../main.py --data mnist --seed 1009 --no-survival --num_epochs 300
+python ../main.py --data mnist --seed 1279 --no-survival --num_epochs 300
+python ../main.py --data mnist --seed 1597 --no-survival --num_epochs 300
+python ../main.py --data mnist --seed 1811 --no-survival --num_epochs 300
+python ../main.py --data mnist --seed 1949 --no-survival --num_epochs 300
+python ../main.py --data mnist --seed 2053 --no-survival --num_epochs 300
