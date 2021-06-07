@@ -1,10 +1,11 @@
 # Variational Deep Survival Clustering
 
-This repository holds the code for clustering survival data using the **<u>va</u>riational <u>de</u>ep <u>s</u>urvival <u>c</u>lustering (VaDeSC)** model.
+This repository holds the code for clustering survival data using the **<u>va</u>riational <u>de</u>ep <u>s</u>urvival <u>c</u>lustering (VaDeSC)** model, a novel probabilistic approach to cluster survival data in a variational deep clustering setting. This method employs a deep generative model to uncover the underlying distribution of both the explanatory variables and the potentially censored survival times.
 
-### How do I clone this repository?
-
-To clone this repo, please follow the instructions provided [here](https://github.com/ShoufaChen/clone-anonymous4open).
+*Schematic summary of VaDeSC*:
+<p align="center">
+  <img align="middle" src="https://github.com/i6092467/vadesc/blob/main/figures/survival_clustering_schematic.png" alt="schematic summary of VaDeSC" width="500"/>
+</p>
 
 ### Requirements
 
@@ -31,3 +32,8 @@ The VaDeSC model is implemented in `/models/Ours/model.py`. Data loaders are pro
 
 - survMNIST code is based on Sebastian Pölsterl's tutorial: [https://github.com/sebp/survival-cnn-estimator](https://github.com/sebp/survival-cnn-estimator)
 - SUPPORT and FLChain datasets and utility functions for data preprocessing were taken from Paidamoyo Chapfuwa's SCA repository: [https://github.com/paidamoyo/survival_cluster_analysis](https://github.com/paidamoyo/survival_cluster_analysis)
+
+### Maintainers
+- Laura Manduchi ([laura.manduchi@inf.ethz.ch](mailto:laura.manduchi@inf.ethz.ch))
+- Ričards Marcinkevičs ([ricards.marcinkevics@inf.ethz.ch](mailto:ricards.marcinkevics@inf.ethz.ch))
+- Michela C. Massi
