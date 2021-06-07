@@ -4,7 +4,7 @@ This repository holds the code for clustering survival data using the **<u>va</u
 
 *Schematic summary of VaDeSC*:
 <p align="center">
-  <img align="middle" src="https://github.com/i6092467/vadesc/blob/main/figures/survival_clustering_schematic.png" alt="schematic summary of VaDeSC" width="500"/>
+  <img align="middle" src="https://github.com/i6092467/vadesc/blob/main/figures/survival_clustering_schematic.png" alt="schematic summary of VaDeSC" width="400"/>
 </p>
 
 ### Requirements
