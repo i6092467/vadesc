@@ -80,7 +80,7 @@ def get_data(args, configs, val=False):
                                                                                            weibull_k=1,
                                                                                            brange=[-10.0, 10.0],
                                                                                            isotropic=True,
-                                                                                           xrange=[-.5, .5])
+                                                                                           xrange=[-.5, .5], plot=False)
         # Normalisation
         t = t / np.max(t) + 0.001
         scaler = StandardScaler()

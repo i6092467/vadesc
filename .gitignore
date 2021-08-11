@@ -1,0 +1,4 @@
+.idea/*
+models/Ours/logs/*
+bin/*.png
+bin/*.txt

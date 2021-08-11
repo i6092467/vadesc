@@ -35,7 +35,8 @@ def plot_group_kaplan_meier(t, d, c, dir=None):
     plt.ylabel("Survival Probability")
     if dir is not None:
         plt.savefig(fname=os.path.join(dir, "km_group_plot.png"), dpi=300, bbox_inches="tight")
-    plt.show()
+    else:
+        plt.show()
 
 
 def plot_group_coxph(x, t, d, c, dir=None):
@@ -71,12 +72,12 @@ def plotting_setup(font_size=12):
     rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
 
 
-def plot_dataset(X, t, d, c, font_size=12, dir=None):
+def plot_dataset(X, t, d, c, font_size=12, seed=42, dir=None):
     plotting_setup(font_size=font_size)
 
     plot_group_kaplan_meier(t=t, d=d, c=c, dir=dir)
 
-    X_embedded = TSNE(n_components=2).fit_transform(X)
+    X_embedded = TSNE(n_components=2, random_state=seed).fit_transform(X)
 
     for l in np.unique(c):
         plt.scatter(X_embedded[c == l, 0], X_embedded[c == l, 1], s=1.5, c=CB_COLOR_CYCLE[int(l)],
@@ -86,7 +87,8 @@ def plot_dataset(X, t, d, c, font_size=12, dir=None):
     plt.legend(markerscale=3.0)
     if dir is not None:
         plt.savefig(fname=os.path.join(dir, "tsne_plot.png"), dpi=300)
-    plt.show()
+    else:
+        plt.show()
 
 
 def plot_elbow(ks, avg, sd, xlab, ylab, dir=None):
