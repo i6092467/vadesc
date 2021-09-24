@@ -1,11 +1,6 @@
 # Variational Deep Survival Clustering
 
-This repository holds the code for clustering survival data using the **<u>va</u>riational <u>de</u>ep <u>s</u>urvival <u>c</u>lustering (VaDeSC)** model, a novel probabilistic approach to cluster survival data in a variational deep clustering setting. This method employs a deep generative model to uncover the underlying distribution of both the explanatory variables and the potentially censored survival times. Further details can be found in [this paper](https://arxiv.org/abs/2106.05763).
-
-*Schematic summary of VaDeSC*:
-<p align="center">
-  <img align="middle" src="https://github.com/i6092467/vadesc/blob/main/figures/survival_clustering_schematic.png" alt="schematic summary of VaDeSC" width="400"/>
-</p>
+This repository holds the code for clustering survival data using the **<u>va</u>riational <u>de</u>ep <u>s</u>urvival <u>c</u>lustering (VaDeSC)** model, a novel probabilistic approach to cluster survival data in a variational deep clustering setting. This method employs a deep generative model to uncover the underlying distribution of both the explanatory variables and the potentially censored survival times.
 
 ### Requirements
 
