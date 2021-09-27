@@ -16,6 +16,9 @@ from data_utils import construct_surv_df
 
 CB_COLOR_CYCLE = ['#377eb8', '#ff7f00', '#4daf4a', '#f781bf', '#a65628', '#984ea3', '#999999', '#e41a1c', '#dede00']
 GRAY_COLOR_CYCLE = ['black', 'dimgray', 'darkgray', 'gainsboro', 'whitesmoke']
+LINE_TYPES = ['solid', 'dashed', 'dashdot', 'dotted', 'dashed']
+MARKER_STYLES = ['', '', '', '', '']
+DASH_STYLES = [[], [4, 4], [4, 1], [1, 1, 1], [2, 1, 2]]
 
 
 def plot_overall_kaplan_meier(t, d, dir=None):
@@ -42,25 +45,34 @@ def plot_group_kaplan_meier(t, d, c, dir=None):
         plt.show()
 
 
-def plot_bigroup_kaplan_meier(t, d, c, c_, dir=None, postfix=None):
+def plot_bigroup_kaplan_meier(t, d, c, c_, dir=None, postfix=None, legend=False):
     fig = plt.figure()
 
     # Plot true clusters
     labels = np.unique(c)
     for l in labels:
         kmf = KaplanMeierFitter()
-        kmf.fit(t[c == l], d[c == l], label="Cluster " + str(int(l + 1)))
+        if legend:
+            kmf.fit(t[c == l], d[c == l], label="Cluster " + str(int(l + 1)))
+        else:
+            kmf.fit(t[c == l], d[c == l])
         kmf.plot(ci_show=True, color=CB_COLOR_CYCLE[int(l)])
 
     # Plot assigned clusters
     labels = np.unique(c_)
     for l in labels:
         kmf = KaplanMeierFitter()
-        kmf.fit(t[c_ == l], d[c_ == l], label="Assigned cluster " + str(int(l + 1)))
-        kmf.plot(ci_show=True, color=GRAY_COLOR_CYCLE[int(l)], alpha=0.5)
+        if legend:
+            kmf.fit(t[c_ == l], d[c_ == l], label="Assigned cluster " + str(int(l + 1)))
+        else:
+            kmf.fit(t[c_ == l], d[c_ == l])
+        kmf.plot(ci_show=True, color='black', alpha=0.5, linestyle=LINE_TYPES[int(l)], dashes=DASH_STYLES[int(l)])
 
     plt.xlabel("Time")
     plt.ylabel("Survival Probability")
+
+    if not legend:
+        plt.legend('', frameon=False)
 
     if dir is not None:
         fname = 'km_bigroup_plot'
