@@ -31,7 +31,8 @@ from datasets.support.support_data import generate_support
 from datasets.hgg.hgg_data import generate_hgg, generate_hgg_full
 from datasets.hemodialysis.hemo_data import generate_hemo
 
-from plotting import plot_overall_kaplan_meier, plot_group_kaplan_meier, plot_group_coxph, plotting_setup
+from plotting import plot_overall_kaplan_meier, plot_group_kaplan_meier, plot_bigroup_kaplan_meier, plot_group_coxph, \
+    plot_tsne_by_cluster, plot_tsne_by_survival, plotting_setup
 
 tfd = tfp.distributions
 tfkl = tf.keras.layers
@@ -56,12 +57,13 @@ def get_data(args, configs, val=False):
             valid_perc = .0
         if val:
             x_train, x_valid, x_test, t_train, t_valid, t_test, d_train, d_valid, d_test, c_train, c_valid, c_test = \
-                generate_surv_MNIST(n_groups=5, seed=args.seed, p_cens=.3, valid_perc=valid_perc)
+                generate_surv_MNIST(n_groups=5, seed=args.seed, p_cens=.3, valid_perc=valid_perc, plot=True)
         else:
             x_train, x_test, t_train, t_test, d_train, d_test, c_train, c_test = generate_surv_MNIST(n_groups=5,
                                                                                                      seed=args.seed,
                                                                                                      p_cens=.3,
-                                                                                                     valid_perc=valid_perc)
+                                                                                                     valid_perc=valid_perc,
+                                                                                                     plot=True)
         # Normalisation
         x_test = x_test / 255.
         if val:
@@ -80,7 +82,7 @@ def get_data(args, configs, val=False):
                                                                                            weibull_k=1,
                                                                                            brange=[-10.0, 10.0],
                                                                                            isotropic=True,
-                                                                                           xrange=[-.5, .5], plot=False)
+                                                                                           xrange=[-.5, .5], plot=True)
         # Normalisation
         t = t / np.max(t) + 0.001
         scaler = StandardScaler()
@@ -408,7 +410,11 @@ def run_experiment(args, configs, loss):
             plot_group_coxph(x=x_train, t=y_train[:, 0], d=y_train[:, 1], c=yy, dir="")
         elif args.data == 'flchain':
             plot_group_coxph(x=x_train, t=y_train[:, 0], d=y_train[:, 1], c=yy, dir="")
-        
+
+        plot_tsne_by_cluster(X=z_sample[:, 0], c=y_train[:, 2], font_size=12, seed=42, dir='./', postfix='z_wt')
+        plot_tsne_by_survival(X=z_sample[:, 0], t=y_train[:, 0], d=y_train[:, 1], seed=42, dir='./', postfix='z_wt')
+        plot_bigroup_kaplan_meier(t=y_train[:, 0], d=y_train[:, 1], c=y_train[:, 2], c_=yy, dir='./', postfix='wt')
+
         tf.keras.backend.set_value(model.use_t, np.array([0.0])) 
         rec, z_sample, p_z_c, p_c_z, risk_scores = model.predict((x_train, y_train), batch_size=100)
         yy = np.argmax(p_c_z, axis=-1)
@@ -422,6 +428,10 @@ def run_experiment(args, configs, loss):
         rae_c = RAE(t_pred=t_pred_med[y_train[:, 1] == 0], t_true=y_train[y_train[:, 1] == 0, 0],
                     cens_t=1 - y_train[y_train[:, 1] == 0, 1])
         f.write("Train (w/o t)  |   Accuracy: %f, NMI: %f, ARI: %f. CI: %f, RAE (nc.): %f, RAE (c.): %f.\n" % (acc, nmi, ari, ci, rae_nc, rae_c))
+
+        plot_tsne_by_cluster(X=z_sample[:, 0], c=y_train[:, 2], font_size=12, seed=42, dir='./', postfix='z_wot')
+        plot_tsne_by_survival(X=z_sample[:, 0], t=y_train[:, 0], d=y_train[:, 1], seed=42, dir='./', postfix='z_wot')
+        plot_bigroup_kaplan_meier(t=y_train[:, 0], d=y_train[:, 1], c=y_train[:, 2], c_=yy, dir='./', postfix='wot')
 
         # Test set performance
         tf.keras.backend.set_value(model.use_t, np.array([1.0]))

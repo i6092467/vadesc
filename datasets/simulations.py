@@ -237,6 +237,7 @@ def simulate_nonlin_profile_surv(p: int, n: int, k: int, latent_dim: int, p_cens
     t_cens = uniform(0, t, (n, ))
     t[d == 0] = t_cens[d == 0]
 
+    # Plotting can take a while for large n
     if plot:
         plot_dataset(X, t, d, c, dir='./')
 

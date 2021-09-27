@@ -108,7 +108,7 @@ class GMM_Survival(tf.keras.Model):
             self.encoder = Encoder(self.encoded_size)
             self.decoder = Decoder(self.inp_shape, self.activation)
         self.c_mu = tf.Variable(tf.initializers.GlorotNormal()(shape=[self.num_clusters, self.encoded_size]), name='mu')
-        self.log_c_sigma = tf.Variable(tf.ones([self.num_clusters, self.encoded_size]), name="sigma")
+        self.log_c_sigma = tf.Variable(tf.initializers.GlorotNormal()(shape=[self.num_clusters, self.encoded_size]), name='sigma') #tf.Variable(tf.ones([self.num_clusters, self.encoded_size]), name="sigma")
         # Cluster-specific survival model parameters
         self.c_beta = tf.Variable(tf.initializers.GlorotNormal()(shape=[self.num_clusters, self.encoded_size + 1]),
                                   name='beta')
@@ -130,7 +130,10 @@ class GMM_Survival(tf.keras.Model):
         z_mu, log_z_sigma = self.encoder(enc_input)
         tf.debugging.check_numerics(z_mu, message="z_mu")
         z = tfd.MultivariateNormalDiag(loc=z_mu, scale_diag=tf.math.sqrt(tf.math.exp(log_z_sigma)))
-        z_sample = z.sample(self.s)
+        if training:
+            z_sample = z.sample(self.s)
+        else:
+            z_sample = tf.expand_dims(z_mu, axis=0)
         tf.debugging.check_numerics(self.c_mu, message="c_mu")
         tf.debugging.check_numerics(self.log_c_sigma, message="c_sigma")
         c_sigma = tf.math.exp(self.log_c_sigma)

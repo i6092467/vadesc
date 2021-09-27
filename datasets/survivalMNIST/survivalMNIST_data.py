@@ -7,6 +7,8 @@ from numpy.random import choice, uniform, normal, exponential
 import tensorflow as tf
 import tensorflow.keras.datasets.mnist as mnist
 
+from plotting import plot_dataset
+
 
 def load_MNIST(split: str, flatten=True):
     (train_X, train_y), (test_X, test_y) = mnist.load_data()
@@ -25,7 +27,7 @@ def load_MNIST(split: str, flatten=True):
 
 
 def generate_surv_MNIST(n_groups: int, seed: int, p_cens: float, risk_range=[0.5, 15.0], risk_stdev=0.00,
-                        valid_perc=.05):
+                        valid_perc=.05, plot=False):
     assert 2 <= n_groups <= 10
     assert risk_range[0] < risk_range[1]
 
@@ -70,7 +72,11 @@ def generate_surv_MNIST(n_groups: int, seed: int, p_cens: float, risk_range=[0.5
     c_test = c[labels_test]
 
     t_train = t_train / max([np.max(t_train), np.max(t_test)]) + 0.001
-    t_test = t_test / max([np.max(t_train), np.max(t_test)]) + 0.001   
+    t_test = t_test / max([np.max(t_train), np.max(t_test)]) + 0.001
+
+    # Plotting can take a while for large n
+    if plot:
+        plot_dataset(train_X, t_train, d_train, c_train, dir='./')
 
     if valid_perc > 0:
         n_valid = int(valid_perc * (train_X.shape[0] + test_X.shape[0]))
