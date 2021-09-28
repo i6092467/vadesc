@@ -56,7 +56,7 @@ def plot_bigroup_kaplan_meier(t, d, c, c_, dir=None, postfix=None, legend=False)
             kmf.fit(t[c == l], d[c == l], label="Cluster " + str(int(l + 1)))
         else:
             kmf.fit(t[c == l], d[c == l])
-        kmf.plot(ci_show=True, color=CB_COLOR_CYCLE[int(l)])
+        kmf.plot(ci_show=True, alpha=0.75, color=CB_COLOR_CYCLE[int(l)], linewidth=5)
 
     # Plot assigned clusters
     labels = np.unique(c_)
@@ -66,9 +66,10 @@ def plot_bigroup_kaplan_meier(t, d, c, c_, dir=None, postfix=None, legend=False)
             kmf.fit(t[c_ == l], d[c_ == l], label="Assigned cluster " + str(int(l + 1)))
         else:
             kmf.fit(t[c_ == l], d[c_ == l])
-        kmf.plot(ci_show=True, color='black', alpha=0.5, linestyle=LINE_TYPES[int(l)], dashes=DASH_STYLES[int(l)])
+        kmf.plot(ci_show=True, color='black', alpha=0.5, linestyle=LINE_TYPES[int(l)], dashes=DASH_STYLES[int(l)], linewidth=5)
 
     plt.xlabel("Time")
+    #plt.xlabel(None)
     plt.ylabel("Survival Probability")
 
     if not legend:
@@ -205,8 +206,8 @@ def plot_tsne_by_survival(X, t, d, font_size=16, seed=42, dir=None, postfix=None
                     alpha=0.5, marker='s')
     clb = plt.colorbar()
     clb.ax.set_title(r'$\log(T)$')
-    #plt.xlabel(r'$t$-SNE Dimension 1')
-    #plt.ylabel(r'$t$-SNE Dimension 2')
+    plt.xlabel(r'$t$-SNE Dimension 1')
+    plt.ylabel(r'$t$-SNE Dimension 2')
     plt.axis('off')
     if dir is not None:
         fname = 'tsne_vs_t'
