@@ -22,7 +22,7 @@ Folder `/bin` contains shell scripts for running clustering and time-to-event pr
 - **Hemodialysis**: `run_vadesc_hemo`
 - **NSCLC**: `run_vadesc_nsclc`
 
-The VaDeSC model is implemented in `/models/Ours/model.py`. Data loaders are provided in the `/datasets` folder. HGG and Hemodialysis datasets are not included in the repository due to the medical confidentiality. Code for *post hoc* explanations of cluster assignments is available in the `/post_hoc_explanations` folder.
+The VaDeSC model is implemented in `/models/model.py`. Data loaders are provided in the `/datasets` folder. HGG, Hemodialysis, and NSCLC datasets are not included in the repository due to the medical confidentiality. Code for *post hoc* explanations of cluster assignments is available in the `/post_hoc_explanations` folder.
 
 ### Acknowledgements
 
