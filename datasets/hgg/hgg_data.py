@@ -1,10 +1,10 @@
-# Code from Chapfuwa et al.: https://github.com/paidamoyo/survival_cluster_analysis
+# Based on the code from Chapfuwa et al.: https://github.com/paidamoyo/survival_cluster_analysis
 import os
 
 import numpy as np
 import pandas
 
-from preproc_utils import one_hot_encoder, formatted_data, missing_proportion, \
+from baselines.sca.sca_utils.pre_processing import one_hot_encoder, formatted_data, missing_proportion, \
     one_hot_indices, get_train_median_mode, log_transform, impute_missing
 
 from sklearn.preprocessing import StandardScaler

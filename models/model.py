@@ -1,93 +1,19 @@
 import tensorflow as tf
 import tensorflow_probability as tfp
-import numpy as np
 import os
 
-from tensorflow.keras import layers
-
-from models.Ours.utils import tensor_slice, weibull_log_pdf, weibull_scale
+# pretrain autoencoder
+checkpoint_path = "autoencoder/cp.ckpt"
+checkpoint_dir = os.path.dirname(checkpoint_path)
 
 tfd = tfp.distributions
 tfkl = tf.keras.layers
 tfpl = tfp.layers
 tfk = tf.keras
 
+from models.networks import (VGGEncoder, VGGDecoder, Encoder, Decoder, Encoder_small, Decoder_small)
 
-class Encoder(layers.Layer):
-    def __init__(self, encoded_size):
-        super(Encoder, self).__init__(name='encoder')
-        self.dense1 = tfkl.Dense(500, activation='relu')
-        self.dense2 = tfkl.Dense(500, activation='relu')
-        self.dense3 = tfkl.Dense(2000, activation='relu')
-        self.mu = tfkl.Dense(encoded_size, activation=None)
-        self.sigma = tfkl.Dense(encoded_size, activation=None)
-
-    def call(self, inputs):
-        x = tfkl.Flatten()(inputs)
-        x = self.dense1(x)
-        x = self.dense2(x)
-        x = self.dense3(x)
-        mu = self.mu(x)
-        sigma = self.sigma(x)
-        return mu, sigma
-
-
-class Decoder(layers.Layer):
-    def __init__(self, input_shape, activation):
-        super(Decoder, self).__init__(name='dec')
-        self.inp_shape = input_shape
-        self.dense1 = tfkl.Dense(2000, activation='relu')
-        self.dense2 = tfkl.Dense(500, activation='relu')
-        self.dense3 = tfkl.Dense(500, activation='relu')
-        if activation == "sigmoid":
-            print("yeah")
-            self.dense4 = tfkl.Dense(self.inp_shape, activation="sigmoid")
-        else:
-            self.dense4 = tfkl.Dense(self.inp_shape)
-
-    def call(self, inputs):
-        x = self.dense1(inputs)
-        x = self.dense2(x)
-        x = self.dense3(x)
-        x = self.dense4(x)
-        return x
-
-
-# Smaller encoder and decoder architectures for low-dimensional datasets
-class Encoder_small(layers.Layer):
-    def __init__(self, encoded_size):
-        super(Encoder_small, self).__init__(name='encoder')
-        self.dense1 = tfkl.Dense(50, activation='relu')
-        self.dense2 = tfkl.Dense(100, activation='relu')
-        self.mu = tfkl.Dense(encoded_size, activation=None)
-        self.sigma = tfkl.Dense(encoded_size, activation=None)
-
-    def call(self, inputs):
-        x = tfkl.Flatten()(inputs)
-        x = self.dense1(x)
-        x = self.dense2(x)
-        mu = self.mu(x)
-        sigma = self.sigma(x)
-        return mu, sigma
-
-
-class Decoder_small(layers.Layer):
-    def __init__(self, input_shape, activation):
-        super(Decoder_small, self).__init__(name='dec')
-        self.inp_shape = input_shape
-        self.dense1 = tfkl.Dense(100, activation='relu')
-        self.dense2 = tfkl.Dense(50, activation='relu')
-        if activation == "sigmoid":
-            print("yeah")
-            self.dense4 = tfkl.Dense(self.inp_shape, activation="sigmoid")
-        else:
-            self.dense4 = tfkl.Dense(self.inp_shape)
-
-    def call(self, inputs):
-        x = self.dense1(inputs)
-        x = self.dense2(x)
-        x = self.dense4(x)
-        return x
+from utils.utils import weibull_scale, weibull_log_pdf, tensor_slice
 
 
 class GMM_Survival(tf.keras.Model):
@@ -101,14 +27,18 @@ class GMM_Survival(tf.keras.Model):
         self.s = kwargs['monte_carlo']
         self.sample_surv = kwargs['sample_surv']
         self.learn_prior = kwargs['learn_prior']
-        if self.inp_shape <= 100:
+        if isinstance(self.inp_shape, list):
+            self.encoder = VGGEncoder(encoded_size=self.encoded_size)                                                   #Encoder3D(self.encoded_size)
+            self.decoder = VGGDecoder(input_shape=[256, 256, 1], activation='none')                                     #Decoder3D(self.inp_shape)
+        elif self.inp_shape <= 100:
             self.encoder = Encoder_small(self.encoded_size)
             self.decoder = Decoder_small(self.inp_shape, self.activation)
         else:
             self.encoder = Encoder(self.encoded_size)
             self.decoder = Decoder(self.inp_shape, self.activation)
         self.c_mu = tf.Variable(tf.initializers.GlorotNormal()(shape=[self.num_clusters, self.encoded_size]), name='mu')
-        self.log_c_sigma = tf.Variable(tf.initializers.GlorotNormal()(shape=[self.num_clusters, self.encoded_size]), name='sigma') #tf.Variable(tf.ones([self.num_clusters, self.encoded_size]), name="sigma")
+        # Sometimes this initialisation is more stable numerically:
+        self.log_c_sigma = tf.Variable(tf.initializers.GlorotNormal()([self.num_clusters, self.encoded_size]), name="sigma")
         # Cluster-specific survival model parameters
         self.c_beta = tf.Variable(tf.initializers.GlorotNormal()(shape=[self.num_clusters, self.encoded_size + 1]),
                                   name='beta')
@@ -121,6 +51,7 @@ class GMM_Survival(tf.keras.Model):
         self.use_t = tf.Variable([1.0], trainable=False)
 
     def call(self, inputs, training=True):
+
         # NB: inputs have to include predictors/covariates/features (x), time-to-event (t), and
         # event indicators (d). d[i] == 1 if the i-th event is a death, and d[i] == 0 otherwise.
         x, y = inputs
@@ -133,27 +64,29 @@ class GMM_Survival(tf.keras.Model):
         if training:
             z_sample = z.sample(self.s)
         else:
-            z_sample = tf.expand_dims(z_mu, axis=0)
+            z_sample = tf.expand_dims(z_mu, 0)
         tf.debugging.check_numerics(self.c_mu, message="c_mu")
         tf.debugging.check_numerics(self.log_c_sigma, message="c_sigma")
         c_sigma = tf.math.exp(self.log_c_sigma)
+
+        # p(z|c)
         p_z_c = tf.stack([tf.math.log(
             tfd.MultivariateNormalDiag(loc=tf.cast(self.c_mu[i, :], tf.float64),
                                        scale_diag=tf.math.sqrt(tf.cast(c_sigma[i, :], tf.float64))).prob(
                 tf.cast(z_sample, tf.float64)) + 1e-60) for i in range(self.num_clusters)], axis=-1)
         tf.debugging.check_numerics(p_z_c, message="p_z_c")
 
-        # Cluster prior
+        # prior p(c)
         if self.learn_prior:
             prior_logits = tf.math.abs(self.prior_logits)
             norm = tf.math.reduce_sum(prior_logits, keepdims=True)
-            prior = prior_logits / (norm + tf.keras.backend.epsilon())
+            prior = prior_logits / (norm + 1e-60)
         else:
             prior = self.prior
         tf.debugging.check_numerics(prior, message="prior")
 
-        # Survival model
         if self.survival:
+            # Compute Weibull distribution's scale parameter, given z and c
             tf.debugging.check_numerics(self.c_beta, message="c_beta")
             if self.sample_surv:
                 lambda_z_c = tf.stack([weibull_scale(x=z_sample, beta=self.c_beta[i, :])
@@ -162,13 +95,16 @@ class GMM_Survival(tf.keras.Model):
                 lambda_z_c = tf.stack([weibull_scale(x=tf.stack([z_mu for i in range(self.s)], axis=0),
                                                      beta=self.c_beta[i, :]) for i in range(self.num_clusters)], axis=-1)
             tf.debugging.check_numerics(lambda_z_c, message="lambda_z_c")
+
             # Evaluate p(t|z,c), assuming t|z,c ~ Weibull(lambda_z_c, self.weibull_shape)
             p_t_z_c = tf.stack([weibull_log_pdf(t=t, d=d, lmbd=lambda_z_c[:, :, i], k=self.weibull_shape)
                                 for i in range(self.num_clusters)], axis=-1)
+            p_t_z_c = tf.clip_by_value(p_t_z_c, -1e+64, 1e+64)
             tf.debugging.check_numerics(p_t_z_c, message="p_t_z_c")
             p_c_z = tf.math.log(tf.cast(prior, tf.float64) + 1e-60) + tf.cast(p_z_c, tf.float64) + p_t_z_c
         else:
             p_c_z = tf.math.log(tf.cast(prior, tf.float64) + 1e-60) + tf.cast(p_z_c, tf.float64)
+
         p_c_z = tf.nn.log_softmax(p_c_z, axis=-1)
         p_c_z = tf.math.exp(p_c_z)
         tf.debugging.check_numerics(p_c_z, message="p_c_z")
@@ -214,37 +150,38 @@ class GMM_Survival(tf.keras.Model):
         # Survival time may ba unobserved, so a special procedure is needed when time is not observed...
         p_z_c = p_z_c[0]    # take the first sample
         p_c_z = p_c_z[0]
-        if self.use_t[0] < 0.5:
-            if self.survival:
-                lambda_z_c = lambda_z_c[0]  # Take the first sample
-                # Use Bayes rule to compute p(c|z) instead of p(c|z,t), since t is unknown
-                p_c_z = tf.math.log(tf.cast(prior, tf.float64) + 1e-60) + tf.cast(p_z_c, tf.float64)
-                p_c_z = tf.nn.log_softmax(p_c_z, axis=-1)
-                p_c_z = tf.math.exp(p_c_z)
 
-                inds = tf.dtypes.cast(tf.argmax(p_c_z, axis=-1), tf.int32)
-                risk_scores = tensor_slice(target_tensor=tf.cast(lambda_z_c, tf.float64), index_tensor=inds)
-            else:
-                inds = tf.dtypes.cast(tf.argmax(p_c_z, axis=-1), tf.int32)
-                risk_scores = tensor_slice(target_tensor=p_c_z, index_tensor=inds)
+        if self.survival:
+            lambda_z_c = lambda_z_c[0]  # Take the first sample
+            # Use Bayes rule to compute p(c|z) instead of p(c|z,t), since t is unknown
+            p_c_z_nt = tf.math.log(tf.cast(prior, tf.float64) + 1e-60) + tf.cast(p_z_c, tf.float64)
+            p_c_z_nt = tf.nn.log_softmax(p_c_z_nt, axis=-1)
+            p_c_z_nt = tf.math.exp(p_c_z_nt)
+            inds_nt = tf.dtypes.cast(tf.argmax(p_c_z_nt, axis=-1), tf.int32)
+            risk_scores_nt = tensor_slice(target_tensor=tf.cast(lambda_z_c, tf.float64), index_tensor=inds_nt)
+
+            inds = tf.dtypes.cast(tf.argmax(p_c_z, axis=-1), tf.int32)
+            risk_scores_t = tensor_slice(target_tensor=lambda_z_c, index_tensor=inds)
+
+            p_c_z = tf.cond(self.use_t[0] < 0.5, lambda: p_c_z_nt, lambda: p_c_z)
+            risk_scores = tf.cond(self.use_t[0] < 0.5, lambda: risk_scores_nt, lambda: risk_scores_t)
         else:
             inds = tf.dtypes.cast(tf.argmax(p_c_z, axis=-1), tf.int32)
-            if self.survival:
-                lambda_z_c = lambda_z_c[0]  # Take the first sample
-                risk_scores = tensor_slice(target_tensor=lambda_z_c, index_tensor=inds)
-            else:
-                risk_scores = tensor_slice(target_tensor=p_c_z, index_tensor=inds)
+            risk_scores = tensor_slice(target_tensor=p_c_z, index_tensor=inds)
+            lambda_z_c = risk_scores
 
         p_z_c = tf.cast(p_z_c, tf.float64)
 
-        # NB: transposition to avoid issues in model.predict
-        dec = tf.transpose(dec, [1, 0, 2])
+        if isinstance(self.inp_shape, list):
+            dec = tf.transpose(dec, [1, 0, 2, 3, 4])
+        else:
+            dec = tf.transpose(dec, [1, 0, 2])
         z_sample = tf.transpose(z_sample, [1, 0, 2])
-
-        return dec, z_sample, p_z_c, p_c_z, risk_scores
+        risk_scores = tf.expand_dims(risk_scores, -1)
+        return dec, z_sample, p_z_c, p_c_z, risk_scores, lambda_z_c
 
     def generate_samples(self, j, n_samples):
         z = tfd.MultivariateNormalDiag(loc=self.c_mu[j, :], scale_diag=tf.math.sqrt(tf.math.exp(self.log_c_sigma[j, :])))
         z_sample = z.sample(n_samples)
-        dec = self.decoder(z_sample)
+        dec = self.decoder(tf.expand_dims(z_sample, 0))
         return dec

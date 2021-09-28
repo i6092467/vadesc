@@ -5,11 +5,9 @@ from sklearn.datasets import make_spd_matrix
 
 from scipy.stats import weibull_min
 
-from sim_utils import random_nonlin_map
+from utils.sim_utils import random_nonlin_map
 
-from preproc_utils import formatted_data
-
-from plotting import plot_dataset
+from baselines.sca.sca_utils.pre_processing import formatted_data
 
 
 def simulate_profile_surv(p: int, n: int, k: int, p_cens: float, seed: int, p_c=None, balanced=False, clust_mean=True,
@@ -137,7 +135,7 @@ def simulate_profile_surv(p: int, n: int, k: int, p_cens: float, seed: int, p_c=
 
 def simulate_nonlin_profile_surv(p: int, n: int, k: int, latent_dim: int, p_cens: float, seed: int, p_c=None,
                                  balanced=False, clust_mean=True, clust_cov=True, isotropic=False, clust_coeffs=True,
-                                 clust_intercepts=True, weibull_k=1, xrange=[-5, 5], brange=[-1, 1], plot=False):
+                                 clust_intercepts=True, weibull_k=1, xrange=[-5, 5], brange=[-1, 1]):
     """
     Simulates data with heterogeneous survival profiles and nonlinear (!) relationships
     (covariates are generated from latent features using an MLP decoder).
@@ -236,10 +234,6 @@ def simulate_nonlin_profile_surv(p: int, n: int, k: int, latent_dim: int, p_cens
     d = (uniform(0, 1, (n, )) >= p_cens) * 1.0
     t_cens = uniform(0, t, (n, ))
     t[d == 0] = t_cens[d == 0]
-
-    # Plotting can take a while for large n
-    if plot:
-        plot_dataset(X, t, d, c, dir='./')
 
     return X, t, d, c, Z, mlp_dec, means, cov_mats, coeffs, intercepts
 

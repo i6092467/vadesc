@@ -1,23 +1,21 @@
 # Runs k-means clustering
 import argparse
-
 import numpy as np
-
 import time
-
 import uuid
-
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import normalized_mutual_info_score, adjusted_rand_score
 from sklearn.cluster import KMeans
 
+import sys
+sys.path.insert(0, '../../')
+
 from datasets.survivalMNIST.survivalMNIST_data import generate_surv_MNIST
 from datasets.simulations import simulate_nonlin_profile_surv
+from datasets.hemodialysis.hemo_data import generate_hemo
 
-from models.Ours import utils
-
-from eval_utils import cindex
+from utils import utils
 
 
 def get_data(args, val=False):
@@ -38,7 +36,6 @@ def get_data(args, val=False):
         if val:
             x_valid = x_valid / 255.
         x_train = x_train / 255.
-
     elif args.data == "sim":
         X, t, d, c, Z, mus, sigmas, betas, betas_0, mlp_dec = simulate_nonlin_profile_surv(p=1000, n=60000,
                                                                                            latent_dim=16,
@@ -61,7 +58,9 @@ def get_data(args, val=False):
 
         x_train, x_test, t_train, t_test, d_train, d_test, c_train, c_test = train_test_split(X, t, d, c, test_size=.3,
                                                                                               random_state=args.seed)
-
+    elif args.data == 'hemo':
+        c = args.num_clusters
+        x_train, x_valid, x_test, t_train, t_valid, t_test, d_train, d_valid, d_test, c_train, c_valid, c_test = generate_hemo(seed=args.seed, label=c)
     else:
         NotImplementedError('This dataset is not supported!')
 
@@ -96,6 +95,10 @@ def run_experiment(args):
         f = open("results_MNIST_KM.txt", "a+")
     elif args.data == 'sim':
         f = open("results_sim_KM.txt", "a+")
+    elif args.data == 'liverani':
+        f = open("results_liverani_KM.txt", "a+")
+    elif args.data == 'hemo':
+        f = open("results_hemo_KM.txt", "a+")
 
     f.write("Accuracy train: %f, NMI: %f, ARI: %f.\n" % (acc, nmi, ari))
 
@@ -119,8 +122,8 @@ def main():
     parser.add_argument('--data',
                         default='MNIST',
                         type=str,
-                        choices=['MNIST', 'sim'],
-                        help='specify the data (MNIST, sim)')
+                        choices=['MNIST', 'sim', 'hemo'],
+                        help='specify the data (MNIST, sim, hemo)')
     parser.add_argument('--num_clusters',
                         default=5,
                         type=int,

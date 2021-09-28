@@ -1,5 +1,5 @@
-# Runs Cox PH regression
 import argparse
+import os
 
 import numpy as np
 
@@ -11,13 +11,19 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from lifelines import CoxPHFitter
 
+import sys
+sys.path.insert(0, '../../')
 from datasets.survivalMNIST.survivalMNIST_data import generate_surv_MNIST
 from datasets.simulations import simulate_nonlin_profile_surv
 from datasets.support.support_data import generate_support
+from datasets.hemodialysis.hemo_data import generate_hemo
+from datasets.nsclc_lung.nsclc_lung_data import generate_radiomic_features
 
-from data_utils import construct_surv_df
+from utils.data_utils import construct_surv_df
 
-from eval_utils import cindex
+from utils.eval_utils import cindex
+
+from utils.eval_utils import rae as RAE, calibration
 
 
 def get_data(args, val=False):
@@ -38,7 +44,6 @@ def get_data(args, val=False):
         if val:
             x_valid = x_valid / 255.
         x_train = x_train / 255.
-
     elif args.data == "sim":
         X, t, d, c, Z, mus, sigmas, betas, betas_0, mlp_dec = simulate_nonlin_profile_surv(p=1000, n=60000,
                                                                                            latent_dim=16,
@@ -61,10 +66,15 @@ def get_data(args, val=False):
 
         x_train, x_test, t_train, t_test, d_train, d_test, c_train, c_test = train_test_split(X, t, d, c, test_size=.3,
                                                                                               random_state=args.seed)
-
     elif args.data == 'support':
         x_train, x_valid, x_test, t_train, t_valid, t_test, d_train, d_valid, d_test, c_train, c_valid, c_test = \
             generate_support(seed=args.seed)
+    elif args.data == 'hemo':
+        c = args.num_clusters
+        x_train, x_valid, x_test, t_train, t_valid, t_test, d_train, d_valid, d_test, c_train, c_valid, c_test = generate_hemo(seed=args.seed, label=c)
+    elif args.data == 'nsclc':
+        x_train, x_valid, x_test, t_train, t_valid, t_test, d_train, d_valid, d_test, c_train, c_valid, c_test = \
+            generate_radiomic_features(n_slices=11, dsize=[256, 256], seed=args.seed)
     else:
         NotImplementedError('This dataset is not supported!')
 
@@ -81,6 +91,8 @@ def get_data(args, val=False):
 
 
 def run_experiment(args):
+    os.chdir('../../bin/')
+
     timestr = time.strftime("%Y%m%d-%H%M%S")
     ex_name = "{}_{}".format(str(timestr), uuid.uuid4().hex[:5])
 
@@ -105,16 +117,41 @@ def run_experiment(args):
         f = open("results_MNIST_Cox.txt", "a+")
     elif args.data == 'sim':
         f = open("results_sim_Cox.txt", "a+")
+    elif args.data == 'liverani':
+        f = open("results_liverani_Cox.txt", "a+")
+    elif args.data == 'nki':
+        f = open("results_NKI_Cox.txt", "a+")
     elif args.data == 'support':
         f = open("results_SUPPORT_Cox.txt", "a+")
+    elif args.data == 'hemo':
+        f = open("results_hemo_Cox.txt", "a+")
+    elif args.data == 'nsclc':
+        f = open("results_nsclc_Cox.txt", "a+")
 
-    f.write("CI train: %f.\n" % (ci))
+    f.write("weight_penalty= %f, name= %s, seed= %d.\n" % (args.penalty_weight, ex_name, args.seed))
+    f.write("Train  |   CI: %f.\n" % (ci))
 
     # Test set performance
     risk_scores = np.exp(-np.squeeze(np.matmul(x_test, np.expand_dims(cph.params_, 1))))
     ci = cindex(t=y_test[:, 0], d=y_test[:, 1], scores_pred=risk_scores)
 
-    f.write("CI test: %f.\n" % (ci))
+    rae_nc = RAE(t_pred=cph.predict_median(x_test)[y_test[:, 1] == 1], t_true=y_test[y_test[:, 1] == 1, 0],
+                 cens_t=1 - y_test[y_test[:, 1] == 1, 1])
+    rae_c = RAE(t_pred=cph.predict_median(x_test)[y_test[:, 1] == 0], t_true=y_test[y_test[:, 1] == 0, 0],
+                cens_t=1 - y_test[y_test[:, 1] == 0, 1])
+
+    times_sorted = np.sort(np.unique(y_train[y_train[:, 1] == 1, 0]))
+    cdfs = np.transpose(1 - cph.predict_survival_function(X=x_test, times=times_sorted))
+    cdfs = np.concatenate((np.zeros((cdfs.shape[0], 1)), cdfs), axis=1)
+    pdfs = np.diff(cdfs)
+    t_sample = np.zeros((cdfs.shape[0], 200))
+    for i in range(cdfs.shape[0]):
+        pdf = pdfs[i]
+        probs = pdf / np.sum(pdf)
+        t_sample[i, :] = np.random.choice(a=times_sorted, p=probs, size=(200,))
+    cal = calibration(predicted_samples=t_sample, t=y_test[:, 0], d=y_test[:, 1])
+
+    f.write("Test   |   CI: %f, RAE (nc.): %f, RAE (c.): %f, CAL: %f.\n" % (ci, rae_nc, rae_c, cal))
     f.close()
     print(str(ci))
 
@@ -125,8 +162,8 @@ def main():
     parser.add_argument('--data',
                         default='MNIST',
                         type=str,
-                        choices=['MNIST', 'sim', 'support'],
-                        help='specify the data (MNIST, sim, support)')
+                        choices=['MNIST', 'sim', 'support', 'hemo', 'nsclc'],
+                        help='specify the data (MNIST, sim, support, hemo, nsclc)')
     parser.add_argument('--num_clusters',
                         default=5,
                         type=int,

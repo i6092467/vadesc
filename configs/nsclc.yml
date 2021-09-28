@@ -1,6 +1,6 @@
 # Data
 data:
-  data_name: nki
+  data_name: nsclc
 
 training:
   # Training
@@ -8,9 +8,10 @@ training:
   std_shape_generation: [-0, 0]  # minimum/maximum
 
   # Architecture
-  inp_shape: 1552
-  latent_dim: 16
-  num_clusters: 2
+  inp_shape: [64, 64]
+  n_slices: 11
+  latent_dim: 32
+  num_clusters: 4
   activation: "none"
   type: "FC"
   monte_carlo: 1

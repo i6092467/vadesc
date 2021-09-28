@@ -1,18 +1,24 @@
 import matplotlib
 
-import tensorflow as tf
-
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import sys
 import logging
 from sklearn.utils.linear_assignment_ import linear_assignment
+
 import numpy as np
 
-from scipy.stats import weibull_min
+from scipy.stats import weibull_min, fisk
 
-from models.Ours.constants import ROOT_LOGGER_STR
+import sys
+sys.path.insert(0, '../../')
+from utils.constants import ROOT_LOGGER_STR
 
-matplotlib.use('Agg')
+import tensorflow as tf
+import tensorflow_probability as tfp
+tfd = tfp.distributions
+tfkl = tf.keras.layers
+tfpl = tfp.layers
+tfk = tf.keras
 
 logger = logging.getLogger(ROOT_LOGGER_STR + '.' + __name__)
 
@@ -96,6 +102,26 @@ def save_mnist_generated_samples(model, grid_size=4):
         plt.imsave("generated_" + str(j) + ".png", img)
 
 
+def save_generated_samples(model, inp_size, grid_size=4, cmap='viridis', postfix=None):
+    for j in range(model.num_clusters):
+        samples = model.generate_samples(j=j, n_samples=grid_size**2)
+        cnt = 0
+        img = None
+        for k in range(grid_size):
+            row_k = []
+            for l in range(grid_size):
+                row_k.append(np.reshape(samples[0, cnt, :], (inp_size[0], inp_size[1])))
+                cnt = cnt + 1
+            if img is None:
+                img = np.concatenate(row_k, axis=1)
+            else:
+                img = np.concatenate([img, np.concatenate(row_k, axis=1)], axis=0)
+        if postfix is not None:
+            plt.imsave("generated_" + str(j) + "_" + postfix + ".png", img, cmap=cmap)
+        else:
+            plt.imsave("generated_" + str(j) + ".png", img, cmap=cmap)
+
+
 # Weibull(lmbd, k) log-pdf
 def weibull_log_pdf(t, d, lmbd, k):
     t_ = tf.ones_like(lmbd) * tf.cast(t, tf.float64)
@@ -112,8 +138,17 @@ def weibull_log_pdf(t, d, lmbd, k):
 def weibull_scale(x, beta):
     beta_ = tf.cast(beta, tf.float64)
     beta_ = tf.cast(tf.ones([tf.shape(x)[0], tf.shape(x)[1], beta.shape[0]]), tf.float64) * beta_
-    return tf.math.log(1e-60 + 1.0 + tf.math.exp(tf.reduce_sum(-tf.cast(x, tf.float64) * beta_[:, :, :-1], axis=2) -
-                                                 tf.cast(beta[-1], tf.float64)))
+    return tf.clip_by_value(tf.math.log(1e-60 + 1.0 + tf.math.exp(tf.reduce_sum(-tf.cast(x, tf.float64) * beta_[:, :, :-1], axis=2) -
+                                                 tf.cast(beta[-1], tf.float64))), -1e+64, 1e+64)
+
+
+def sample_weibull_mixture(scales, shape, p_c, n_samples=200):
+    scales_ = np.zeros((scales.shape[0], n_samples))
+    cs = np.zeros((scales.shape[0], n_samples)).astype(int)
+    for i in range(scales.shape[0]):
+        cs[i] = np.random.choice(a=np.arange(0, p_c.shape[1]), p=p_c[i], size=(n_samples,))
+        scales_[i] = scales[i, cs[i]]
+    return scales_ * np.random.weibull(shape, size=(scales.shape[0], n_samples))
 
 
 def tensor_slice(target_tensor, index_tensor):

@@ -1,13 +1,10 @@
 # Based on Pölsterl's survival MNIST dataset:
 #       https://k-d-w.org/blog/2019/07/survival-analysis-for-deep-learning/
-# Based on the code available at https://github.com/sebp/survival-cnn-estimator
 
 import numpy as np
 from numpy.random import choice, uniform, normal, exponential
 import tensorflow as tf
 import tensorflow.keras.datasets.mnist as mnist
-
-from plotting import plot_dataset
 
 
 def load_MNIST(split: str, flatten=True):
@@ -15,7 +12,7 @@ def load_MNIST(split: str, flatten=True):
 
     assert split == "train" or split == "test"
 
-    # Flatten for feedforward architectures...
+    # Flatten
     if flatten:
         train_X = train_X.reshape((train_X.shape[0], train_X.shape[1] * train_X.shape[2]))
         test_X = test_X.reshape((test_X.shape[0], test_X.shape[1] * test_X.shape[2]))
@@ -26,8 +23,7 @@ def load_MNIST(split: str, flatten=True):
         return test_X, test_y
 
 
-def generate_surv_MNIST(n_groups: int, seed: int, p_cens: float, risk_range=[0.5, 15.0], risk_stdev=0.00,
-                        valid_perc=.05, plot=False):
+def generate_surv_MNIST(n_groups: int, seed: int, p_cens: float, risk_range=[0.5, 15.0], risk_stdev=0.00, valid_perc=.05):
     assert 2 <= n_groups <= 10
     assert risk_range[0] < risk_range[1]
 
@@ -39,16 +35,15 @@ def generate_surv_MNIST(n_groups: int, seed: int, p_cens: float, risk_range=[0.5
     test_X, labels_test = load_MNIST(split="test")
 
     # Cluster assignments of digits
-    c0 = choice(np.arange(n_groups), replace=False, size=(n_groups, ))
+    c0 = choice(np.arange(n_groups), replace=False, size=(n_groups,))
     c1 = np.array([])
     if 10 - n_groups > 0:
-        c1 = choice(np.arange(n_groups), replace=True, size=(10 - n_groups, ))
+        c1 = choice(np.arange(n_groups), replace=True, size=(10 - n_groups,))
     c = np.concatenate((c0, c1))
-    #c = np.array([0, 0, 1, 1, 2, 2, 3, 3, 4, 4])
     np.random.shuffle(c)
 
     # Risk scores
-    r_scores = uniform(risk_range[0], risk_range[1], size=(n_groups, ))
+    r_scores = uniform(risk_range[0], risk_range[1], size=(n_groups,))
     r_scores = normal(r_scores[c], risk_stdev)
 
     print("-" * 50)
@@ -62,7 +57,7 @@ def generate_surv_MNIST(n_groups: int, seed: int, p_cens: float, risk_range=[0.5
 
     r_scores_train = r_scores[labels_train]
     r_scores_test = r_scores[labels_test]
-    
+
     stg_train = SurvivalTimeGenerator(num_samples=train_X.shape[0], mean_survival_time=150., prob_censored=p_cens)
     t_train, d_train = stg_train.gen_censored_time(r_scores_train)
     stg_test = SurvivalTimeGenerator(num_samples=test_X.shape[0], mean_survival_time=150., prob_censored=p_cens)
@@ -73,10 +68,6 @@ def generate_surv_MNIST(n_groups: int, seed: int, p_cens: float, risk_range=[0.5
 
     t_train = t_train / max([np.max(t_train), np.max(t_test)]) + 0.001
     t_test = t_test / max([np.max(t_train), np.max(t_test)]) + 0.001
-
-    # Plotting can take a while for large n
-    if plot:
-        plot_dataset(train_X, t_train, d_train, c_train, dir='./')
 
     if valid_perc > 0:
         n_valid = int(valid_perc * (train_X.shape[0] + test_X.shape[0]))

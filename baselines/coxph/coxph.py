@@ -1,11 +1,12 @@
 # Cox PH model
-
 import numpy as np
 
 from lifelines import CoxPHFitter
 
-from data_utils import construct_surv_df
-from eval_utils import cindex
+import sys
+sys.path.insert(0, '../../')
+from utils.data_utils import construct_surv_df
+from utils.eval_utils import cindex
 
 
 def fit_coxph(X: np.ndarray, t: np.ndarray, d: np.ndarray, penalty_weight=0.0, X_test=None, t_test=None, d_test=None):

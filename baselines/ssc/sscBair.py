@@ -8,7 +8,7 @@ from lifelines import CoxPHFitter
 from sklearn.cluster import KMeans
 from sklearn.metrics import normalized_mutual_info_score
 
-from data_utils import construct_surv_df
+from utils.data_utils import construct_surv_df
 
 
 class SSC_Bair():
@@ -77,6 +77,8 @@ class SSC_Bair():
 
     def predict(self, X: np.ndarray):
         assert self.clustering_features is not None
+
+        #hazard_pred = np.exp(-np.squeeze(np.matmul(X, np.expand_dims(self.cph.params_, 1))))
 
         c_pred = self.km.predict(X=X[:, self.clustering_features])
 

@@ -3,6 +3,8 @@ import numpy as np
 
 from sklearn.datasets import make_low_rank_matrix
 
+import pandas as pd
+
 
 def random_nonlin_map(n_in, n_out, n_hidden, rank=1000):
     # Random MLP mapping
@@ -23,3 +25,10 @@ def random_nonlin_map(n_in, n_out, n_hidden, rank=1000):
 
 def ReLU(x):
     return x * (x > 0)
+
+
+def pp(start, end, n):
+    start_u = start.value//10**9
+    end_u = end.value//10**9
+
+    return pd.DatetimeIndex((10**9*np.random.randint(start_u, end_u, n, dtype=np.int64)).view('M8[ns]'))

@@ -5,44 +5,51 @@ import numpy as np
 import pandas
 
 from baselines.sca.sca_utils.pre_processing import one_hot_encoder, formatted_data, missing_proportion, \
-    one_hot_indices, get_train_median_mode, log_transform
+    one_hot_indices, get_train_median_mode
 
 from sklearn.preprocessing import StandardScaler
 
+# age: age in years
+# sex: F=female, M=male
+# sample.yr: the calendar year in which a blood sample was obtained
+# kappa: serum free light chain, kappa portion
+# lambda: serum free light chain, lambda portion
+# flc.grp: the FLC group for the subject, as used in the original analysis
+# creatinine: serum creatinine
+# mgus: 1 if the subject had been diagnosed with monoclonal gammapothy (MGUS)
+# futime: days from enrollment until death. Note that there are 3 subjects whose sample was obtained on their death date.
+# death 0=alive at last contact date, 1=dead
+# chapter: for those who died, a grouping of their primary cause of death by chapter headings of
+# the International Code of Diseases ICD-9
 
-def generate_data(seed=42):
+
+def generate_data(seed):
     np.random.seed(seed)
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    path = os.path.abspath(os.path.join(dir_path, '', 'support2.csv'))
+    path = os.path.abspath(os.path.join(dir_path, '', 'flchain.csv'))
     print("path:{}".format(path))
     data_frame = pandas.read_csv(path, index_col=0)
-    to_drop = ['hospdead', 'death', 'prg2m', 'prg6m', 'dnr', 'dnrday', 'd.time', 'aps', 'sps', 'surv2m', 'surv6m',
-               'totmcst']
     print("head of data:{}, data shape:{}".format(data_frame.head(), data_frame.shape))
-    print("missing:{}".format(missing_proportion(data_frame.drop(labels=to_drop, axis=1))))
+    # x_data = data_frame[['age', 'sex', 'kappa', 'lambda', 'flc.grp', 'creatinine', 'mgus']]
     # Preprocess
-    one_hot_encoder_list = ['sex', 'dzgroup', 'dzclass', 'income', 'race', 'ca', 'sfdm2']
-    data_frame = one_hot_encoder(data=data_frame, encode=one_hot_encoder_list)
-
-    data_frame = log_transform(data_frame, transform_ls=['totmcst', 'totcst', 'charges', 'pafi', 'sod'])
-    print("na columns:{}".format(data_frame.columns[data_frame.isnull().any()].tolist()))
-    t_data = data_frame[['d.time']]
+    to_drop = ['futime', 'death', 'chapter']
+    print("missing:{}".format(missing_proportion(data_frame.drop(labels=to_drop, axis=1))))
+    one_hot_encoder_list = ['sex', 'flc.grp', 'sample.yr']
+    data_frame = one_hot_encoder(data_frame, encode=one_hot_encoder_list)
+    t_data = data_frame[['futime']]
     e_data = data_frame[['death']]
-    # dzgroup roughly corresponds to the diagnosis; more fine-grained than dzclass
     c_data = data_frame[['death']]
     c_data['death'] = c_data['death'].astype('category')
     c_data['death'] = c_data['death'].cat.codes
-
-    x_data = data_frame.drop(labels=to_drop, axis=1)
-
-    encoded_indices = one_hot_indices(x_data, one_hot_encoder_list)
+    dataset = data_frame.drop(labels=to_drop, axis=1)
+    print("head of dataset data:{}, data shape:{}".format(dataset.head(), dataset.shape))
+    encoded_indices = one_hot_indices(dataset, one_hot_encoder_list)
     include_idx = set(np.array(sum(encoded_indices, [])))
-    mask = np.array([(i in include_idx) for i in np.arange(x_data.shape[1])])
-    print("head of x data:{}, data shape:{}".format(x_data.head(), x_data.shape))
-    print("data description:{}".format(x_data.describe()))
-    covariates = np.array(x_data.columns.values)
+    mask = np.array([(i in include_idx) for i in np.arange(dataset.shape[1])])
+    print("data description:{}".format(dataset.describe()))
+    covariates = np.array(dataset.columns.values)
     print("columns:{}".format(covariates))
-    x = np.array(x_data).reshape(x_data.shape)
+    x = np.array(dataset).reshape(dataset.shape)
     t = np.array(t_data).reshape(len(t_data))
     e = np.array(e_data).reshape(len(e_data))
     c = np.array(c_data).reshape(len(c_data))
@@ -77,8 +84,7 @@ def generate_data(seed=42):
     print("test:{}, valid:{}, train:{}, all: {}".format(len(test_idx), len(valid_idx), num_examples,
                                                         len(test_idx) + len(valid_idx) + num_examples))
 
-    imputation_values = get_train_median_mode(x=x[train_idx], categorial=encoded_indices)
-
+    imputation_values = get_train_median_mode(x=np.array(x[train_idx]), categorial=encoded_indices)
     preprocessed = {
         'train': formatted_data(x=x, t=t, e=e, idx=train_idx, imputation_values=imputation_values),
         'test': formatted_data(x=x, t=t, e=e, idx=test_idx, imputation_values=imputation_values),
@@ -92,7 +98,7 @@ def generate_data(seed=42):
     return preprocessed
 
 
-def generate_support(seed=42):
+def generate_flchain(seed=42):
     preproc = generate_data(seed)
 
     x_train = preproc['train']['x']

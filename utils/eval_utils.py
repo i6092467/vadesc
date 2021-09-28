@@ -4,12 +4,42 @@ import numpy as np
 
 from lifelines.utils import concordance_index
 
+import sys
+
+sys.path.insert(0, '../')
+
+from utils.plotting import plot_group_kaplan_meier
+
 from sklearn.utils.linear_assignment_ import linear_assignment
+from sklearn.metrics.cluster import normalized_mutual_info_score
+import tensorflow as tf
 
 from lifelines import KaplanMeierFitter
 
 from scipy import stats
 from scipy.stats import linregress
+
+
+def accuracy_metric(inp, p_c_z):
+    y = inp[:, 2]
+    y_pred = tf.math.argmax(p_c_z, axis=-1)
+    return tf.numpy_function(normalized_mutual_info_score, [y, y_pred], tf.float64)
+
+
+def cindex_metric(inp, risk_scores):
+    # Evaluates the concordance index based on provided predicted risk scores, computed using hard clustering
+    # assignments.
+    t = inp[:, 0]
+    d = inp[:, 1]
+    risk_scores = tf.squeeze(risk_scores)
+    return tf.cond(tf.reduce_any(tf.math.is_nan(risk_scores)),
+                   lambda: tf.numpy_function(cindex, [t, d, tf.zeros_like(risk_scores)], tf.float64),
+                   lambda: tf.numpy_function(cindex, [t, d, risk_scores], tf.float64))
+    # if tf.reduce_any(tf.math.is_nan(risk_scores)):
+    #     Warning("NaNs in risk scores!")
+    #     return tf.numpy_function(cindex, [t, d, tf.zeros_like(risk_scores)], tf.float64)
+    # else:
+    #     return tf.numpy_function(cindex, [t, d, risk_scores], tf.float64)
 
 
 def cindex(t: np.ndarray, d: np.ndarray, scores_pred: np.ndarray):
@@ -25,7 +55,7 @@ def cindex(t: np.ndarray, d: np.ndarray, scores_pred: np.ndarray):
         ci = concordance_index(event_times=t, event_observed=d, predicted_scores=scores_pred)
     except ZeroDivisionError:
         print('Cannot devide by zero.')
-        ci = 0
+        ci = float(0.5)
     return ci
 
 

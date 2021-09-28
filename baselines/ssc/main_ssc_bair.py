@@ -11,13 +11,15 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import normalized_mutual_info_score, adjusted_rand_score
 
+
+import sys
+sys.path.insert(0, '../../')
 from datasets.survivalMNIST.survivalMNIST_data import generate_surv_MNIST
+from datasets.hemodialysis.hemo_data import generate_hemo
 from datasets.simulations import simulate_nonlin_profile_surv
 
-from models.ssc_bair.sscBair import SSC_Bair, find_best_dim
-from models.Ours import utils
-
-from eval_utils import cindex
+from sscBair import SSC_Bair, find_best_dim
+from utils import utils
 
 
 def get_data(args, val=False):
@@ -38,7 +40,6 @@ def get_data(args, val=False):
         if val:
             x_valid = x_valid / 255.
         x_train = x_train / 255.
-
     elif args.data == "sim":
         X, t, d, c, Z, mus, sigmas, betas, betas_0, mlp_dec = simulate_nonlin_profile_surv(p=1000, n=60000,
                                                                                            latent_dim=16,
@@ -61,21 +62,10 @@ def get_data(args, val=False):
 
         x_train, x_test, t_train, t_test, d_train, d_test, c_train, c_test = train_test_split(X, t, d, c, test_size=.3,
                                                                                               random_state=args.seed)
-
-    elif args.data == "liverani":
-        assert args.num_clusters == 3
-
-        X, t, d, c = load_liverani_simulations(cluster=False)
-
-        # Normalisation
-        t = t / np.max(t) + 0.001
-        scaler = StandardScaler()
-        scaler.fit(X)
-        X = scaler.transform(X)
-
-        x_train, x_test, t_train, t_test, d_train, d_test, c_train, c_test = train_test_split(X, t, d, c, test_size=.01,
-                                                                                              random_state=args.seed)
-
+    elif args.data == 'hemo':
+        c = args.num_clusters
+        x_train, x_valid, x_test, t_train, t_valid, t_test, d_train, d_valid, d_test, c_train, c_valid, \
+        c_test = generate_hemo(seed=args.seed, label=c)
     else:
         NotImplementedError('This dataset is not supported!')
 
@@ -129,6 +119,8 @@ def run_experiment(args):
         f = open("results_sim_SSC.txt", "a+")
     elif args.data == 'liverani':
         f = open("results_liverani_SSC.txt", "a+")
+    elif args.data == 'hemo':
+        f = open("results_hemo_SSC.txt", "a+")
 
     f.write("Accuracy train: %f, NMI: %f, ARI: %f. CI train: %f.\n" % (acc, nmi, ari, ci))
 
@@ -138,7 +130,7 @@ def run_experiment(args):
     acc = utils.cluster_acc(y_test[:, 2], yy)
     nmi = normalized_mutual_info_score(y_test[:, 2], yy)
     ari = adjusted_rand_score(y_test[:, 2], yy)
-    ci = 0.5    #cindex(t=y_test[:, 0], d=y_test[:, 1], scores_pred=risk_scores)
+    ci = 0.5
 
     f.write("Accuracy test: %f, NMI: %f, ARI: %f. CI test: %f.\n" % (acc, nmi, ari, ci))
     f.close()
@@ -154,8 +146,8 @@ def main():
     parser.add_argument('--data',
                         default='MNIST',
                         type=str,
-                        choices=['MNIST', 'sim', 'liverani'],
-                        help='specify the data (MNIST, sim, liverani)')
+                        choices=['MNIST', 'sim', 'hemo'],
+                        help='specify the data (MNIST, sim, hemo)')
     parser.add_argument('--num_clusters',
                         default=5,
                         type=int,
