@@ -25,5 +25,5 @@ The VaDeSC model is implemented in `/models/Ours/model.py`. Data loaders are pro
 
 ### Acknowledgements
 
-- survMNIST code is based on Sebastian Pölsterl's tutorial: [https://github.com/sebp/survival-cnn-estimator](https://github.com/sebp/survival-cnn-estimator)
-- SUPPORT and FLChain datasets and utility functions for data preprocessing were taken from Paidamoyo Chapfuwa's SCA repository: [https://github.com/paidamoyo/survival_cluster_analysis](https://github.com/paidamoyo/survival_cluster_analysis)
+- survMNIST code is based on [Sebastian Pölsterl's tutorial](https://github.com/sebp/survival-cnn-estimator)
+- SUPPORT and FLChain datasets and utility functions for data preprocessing were taken from Chapfuwa et al.'s SCA repository: [https://github.com/paidamoyo/survival_cluster_analysis](https://github.com/paidamoyo/survival_cluster_analysis) and Nagpal et al.'s DCM repository [https://github.com/chiragnagpal/deep_cox_mixtures](https://github.com/chiragnagpal/deep_cox_mixtures)
