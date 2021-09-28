@@ -16,11 +16,11 @@ from datasets.nsclc_lung.CT_preproc_utils import (preprocess_lung1_images, prepr
 
 from utils.radiomics_utils import extract_radiomics_features
 
-# TODO: REMOVE THIS EVENTUALLY !!!
-LUNG1_CT_DIR = '/local/home/Datasets/Lung1/CT'
-RADIOGENOMICS_DIR = '/local/home/Datasets/NSCLC_Radiogenomics'
-LUNG3_DIR = '/local/home/Datasets/Lung3'
-BASEL_DIR = '/cluster/work/vogtlab/Projects/Lungstage/lungstage-data'
+# TODO: insert directories with CT scans and clinical data for NSCLC datasets
+LUNG1_CT_DIR = '...'
+RADIOGENOMICS_DIR = '...'
+LUNG3_DIR = '...'
+BASEL_DIR = '...'
 
 
 def generate_lung1_images(n_slices: int, dsize, seed=42, verbose=1, normalise_t=True):
