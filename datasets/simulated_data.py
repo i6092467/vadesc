@@ -1,4 +1,7 @@
-from datasets.simulations import format_profile_surv_data_tf    # Complies with the data interface within the SCA code by Chapfuwa et al.
+"""
+Returns the synthetic data.
+"""
+from datasets.simulations import format_profile_surv_data_tf
 
 
 def generate_data():

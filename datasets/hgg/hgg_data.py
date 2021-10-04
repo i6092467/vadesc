@@ -1,4 +1,8 @@
-# Based on the code from Chapfuwa et al.: https://github.com/paidamoyo/survival_cluster_analysis
+"""
+Dataset of high-grade glioma patients (HGG).
+Based on the code from Chapfuwa et al.:
+    https://github.com/paidamoyo/survival_cluster_analysis
+"""
 import os
 
 import numpy as np

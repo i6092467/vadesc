@@ -1,8 +1,12 @@
-# Based on Pölsterl's survival MNIST dataset:
-#       https://k-d-w.org/blog/2019/07/survival-analysis-for-deep-learning/
+"""
+Survival MNIST dataset.
+Based on Pölsterl's tutorial:
+    https://k-d-w.org/blog/2019/07/survival-analysis-for-deep-learning/
+    https://github.com/sebp/survival-cnn-estimator
+"""
 
 import numpy as np
-from numpy.random import choice, uniform, normal, exponential
+from numpy.random import choice, uniform, normal
 import tensorflow as tf
 import tensorflow.keras.datasets.mnist as mnist
 

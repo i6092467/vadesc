@@ -1,3 +1,6 @@
+"""
+Runs Cox PH regression.
+"""
 import argparse
 import os
 

@@ -1,6 +1,8 @@
+"""
+miscellaneous utility functions.
+"""
 import matplotlib
 
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import logging
 from sklearn.utils.linear_assignment_ import linear_assignment
@@ -10,15 +12,20 @@ import numpy as np
 from scipy.stats import weibull_min, fisk
 
 import sys
-sys.path.insert(0, '../../')
+
 from utils.constants import ROOT_LOGGER_STR
 
 import tensorflow as tf
 import tensorflow_probability as tfp
+
 tfd = tfp.distributions
 tfkl = tf.keras.layers
 tfpl = tfp.layers
 tfk = tf.keras
+
+matplotlib.use('Agg')
+
+sys.path.insert(0, '../../')
 
 logger = logging.getLogger(ROOT_LOGGER_STR + '.' + __name__)
 

@@ -1,3 +1,6 @@
+"""
+Data loaders for NSCLC datasets.
+"""
 import os
 import re
 
@@ -24,6 +27,9 @@ BASEL_DIR = '...'
 
 
 def generate_lung1_images(n_slices: int, dsize, seed=42, verbose=1, normalise_t=True):
+    """
+    Loads Lung1 CT and survival data.
+    """
     np.random.seed(seed)
 
     # Load CT data
@@ -75,10 +81,14 @@ def generate_lung1_images(n_slices: int, dsize, seed=42, verbose=1, normalise_t=
 
 
 def generate_radiogenomics_images(n_slices: int, dsize, seed=42, verbose=1, normalise_t=True):
+    """
+    Loads a subset of NSCLC Radiogenomics CT and survival data.
+    """
     np.random.seed(seed)
 
     # Load CT data
-    X = preprocess_radiogenomics_images(radiogenomics_dir=RADIOGENOMICS_DIR, n_slices=n_slices, dsize=[256, 256], n_bins=40)
+    X = preprocess_radiogenomics_images(radiogenomics_dir=RADIOGENOMICS_DIR, n_slices=n_slices, dsize=[256, 256],
+                                        n_bins=40)
 
     # Downscale
     if dsize[0] < 256:
@@ -142,10 +152,14 @@ def generate_radiogenomics_images(n_slices: int, dsize, seed=42, verbose=1, norm
 
 
 def generate_radiogenomics_images_amc(n_slices: int, dsize, seed=42, verbose=1, normalise_t=True):
+    """
+    Loads a subset of NSCLC Radiogenomics CT and survival data.
+    """
     np.random.seed(seed)
 
     # Load CT data
-    X = preprocess_radiogenomics_images_amc(radiogenomics_dir=RADIOGENOMICS_DIR, n_slices=n_slices, dsize=[256, 256], n_bins=40)
+    X = preprocess_radiogenomics_images_amc(radiogenomics_dir=RADIOGENOMICS_DIR, n_slices=n_slices, dsize=[256, 256],
+                                            n_bins=40)
 
     # Downscale
     if dsize[0] < 256:
@@ -191,6 +205,9 @@ def generate_radiogenomics_images_amc(n_slices: int, dsize, seed=42, verbose=1, 
 
 
 def generate_lung3_images(n_slices: int, dsize, seed=42, verbose=1, normalise_t=True):
+    """
+    Loads Lung3 CT and survival data.
+    """
     np.random.seed(seed)
 
     # Load CT data
@@ -236,6 +253,9 @@ def generate_lung3_images(n_slices: int, dsize, seed=42, verbose=1, normalise_t=
 
 
 def generate_basel_images(n_slices: int, dsize, seed=42, verbose=1, normalise_t=True):
+    """
+    Loads Basel University Hospital CT and survival data.
+    """
     np.random.seed(seed)
 
     # Load CT data
@@ -282,6 +302,9 @@ def generate_basel_images(n_slices: int, dsize, seed=42, verbose=1, normalise_t=
 
 
 def generate_radiomic_features(n_slices: int, seed: int, dsize):
+    """
+    Loads radiomic features from all NSCLC datasets with segmentations available.
+    """
     _ = preprocess_lung1_images(lung1_dir=LUNG1_CT_DIR, n_slices=n_slices, dsize=dsize, n_bins=40)
     _ = preprocess_radiogenomics_images(radiogenomics_dir=RADIOGENOMICS_DIR, n_slices=n_slices, dsize=dsize, n_bins=40)
     _ = preprocess_basel_images(basel_dir=BASEL_DIR, n_slices=n_slices, dsize=dsize, n_bins=40)
@@ -289,7 +312,7 @@ def generate_radiomic_features(n_slices: int, seed: int, dsize):
     seg_file = '../datasets/nsclc_lung/lung1_segmentations_' + str(n_slices) + '_' + str(dsize[0]) + 'x' + \
                str(dsize[1]) + '.npy'
     masks = np.load(file=seg_file, allow_pickle=True)
-    masks = np.delete(masks, np.concatenate([IGNORED_PATIENTS, [127]]), axis = 0)
+    masks = np.delete(masks, np.concatenate([IGNORED_PATIENTS, [127]]), axis=0)
     radiomic_features_lung1 = extract_radiomics_features(
         data_file='../datasets/nsclc_lung/lung1_best_slices_preprocessed_' + str(n_slices) + '_' +
                   str(dsize[0]) + 'x' + str(dsize[1]) + '.npy', masks=masks)

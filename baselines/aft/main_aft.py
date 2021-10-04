@@ -1,3 +1,6 @@
+"""
+Runs Weibull AFT model.
+"""
 import argparse
 
 import os
@@ -13,7 +16,7 @@ import uuid
 from lifelines import WeibullAFTFitter
 
 import sys
-sys.path.insert(0, '../../')
+
 from datasets.support.support_data import generate_support
 from datasets.hgg.hgg_data import generate_hgg
 from datasets.nsclc_lung.nsclc_lung_data import generate_radiomic_features
@@ -27,6 +30,8 @@ from utils.eval_utils import cindex, calibration
 from utils.eval_utils import rae as RAE
 
 from utils import utils
+
+sys.path.insert(0, '../../')
 
 
 def get_data(args, val=False):

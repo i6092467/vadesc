@@ -1,3 +1,6 @@
+"""
+Loss functions for the reconstruction term of the ELBO.
+"""
 import tensorflow as tf
 
 

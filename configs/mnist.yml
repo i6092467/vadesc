@@ -5,26 +5,21 @@ data:
 training:
   # Training
   eval_frequency: 200
-  std_shape_generation: [-0, 0]  # minimum/maximum
 
   # Architecture
   inp_shape: 784
   latent_dim: 16
   activation: "sigmoid"
-  type: "FC"
   monte_carlo: 1
 
   # Clustering model
   num_clusters: 5
   learn_prior: True
 
-  # Optimization.
-  loss_str: 'l2'
-  regularization: 0.0005
-  dropout: 1
+  # Optimization
   learning_rate: 0.0008
   decay_rate: 0.99
-  momentum: 0 #0.9
+  momentum: 0
 
   # Survival model
   weibull_shape: 1

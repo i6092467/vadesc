@@ -1,5 +1,7 @@
-# A rough Python implementation of the semi-supervised survival data clustering described in
-# https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.0020108
+"""
+A Python implementation of the semi-supervised survival data clustering described by Bair & Tibshirani in
+    https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.0020108
+"""
 
 import numpy as np
 
@@ -77,8 +79,6 @@ class SSC_Bair():
 
     def predict(self, X: np.ndarray):
         assert self.clustering_features is not None
-
-        #hazard_pred = np.exp(-np.squeeze(np.matmul(X, np.expand_dims(self.cph.params_, 1))))
 
         c_pred = self.km.predict(X=X[:, self.clustering_features])
 

@@ -1,3 +1,6 @@
+"""
+Utility functions for CT scan preprocessing.
+"""
 import numpy as np
 import pandas as pd
 import os
@@ -51,7 +54,7 @@ def get_pixels(scans, returnList=False):
         return [s.pixel_array for s in scans]
 
 
-# Utility functions for histogram equalisation
+# Performs histogram equalisation
 def histogram_equalization(image, n_bins=256):
     # get image histogram
     image_histogram, bins = np.histogram(image.flatten(), n_bins, density=True)
@@ -62,7 +65,7 @@ def histogram_equalization(image, n_bins=256):
     return image_equalized.reshape(image.shape), cdf
 
 
-# Utility function for equalising histograms of a batch of images
+# Performs histogram equalisation on a batch of images
 def equalise_histograms(images, n_bins=256):
     images_eq = np.copy(images)
     for i in range(images.shape[0]):
@@ -71,7 +74,7 @@ def equalise_histograms(images, n_bins=256):
     return images_eq
 
 
-# Performs minmax normalisation of an image batch
+# Performs minmax normalisation on a batch of images
 def normalise_images(images):
     images_n = np.zeros_like(images)
     for i in range(images.shape[0]):
@@ -88,6 +91,7 @@ def downscale_images(images, desired_size):
     return downscaled
 
 
+# Crops a CT slice around lungs, lung segmentation is optional
 def crop_image(image, lung_segmentation=None, p_min=0.15):
     if lung_segmentation is None:
         th, threshed = cv2.threshold(image, p_min, 1, cv2.THRESH_BINARY)
@@ -108,20 +112,22 @@ def crop_image(image, lung_segmentation=None, p_min=0.15):
     return dst
 
 
+# Rescales the image to the specified size
 def resize_image(image, desired_size):
     img = Image.fromarray(image)
-    old_size = img.size  # old_size[0] is in (width, height) format
+    old_size = img.size
     ratio = float(desired_size) / max(old_size)
     new_size = tuple([int(x * ratio) for x in old_size])
     delta_w = desired_size - new_size[0]
     delta_h = desired_size - new_size[1]
     padding = (delta_w // 2, delta_h // 2, delta_w - (delta_w // 2), delta_h - (delta_h // 2))
     im = img.resize(new_size, Image.ANTIALIAS)
-    new_im = ImageOps.expand(im, padding, fill=0)  # fill=np.median(outer_brim))
+    new_im = ImageOps.expand(im, padding, fill=0)
     new_im = np.array(new_im)
     return new_im
 
 
+# Crops CT scans and subsequently performs histogram equalisation
 def crop_equalize_images(images, shape, n_bins, lung_segmentations=None, p_min=0.15):
     images_n = np.zeros([len(images), shape, shape])
     for i in range(images.shape[0]):
@@ -137,6 +143,10 @@ def crop_equalize_images(images, shape, n_bins, lung_segmentations=None, p_min=0
 
 
 def load_lung1_images_max_tumour_volume_ave(lung1_dir, n_slices, dsize, verbose=1):
+    """
+    Loads Lung1 dataset, takes an average 15 mm around the slice with the maximum transversal tumour area.
+        https://wiki.cancerimagingarchive.net/display/Public/NSCLC-Radiomics
+    """
     assert n_slices % 2 == 1
 
     lung1_best_slices = np.zeros((LUNG1_N_PATIENTS, 1, dsize[0], dsize[1]))
@@ -273,6 +283,10 @@ def load_lung1_images_max_tumour_volume_ave(lung1_dir, n_slices, dsize, verbose=
 
 
 def load_lung3_images_max_tumour_volume_ave(lung3_dir, n_slices, dsize, verbose=1):
+    """
+    Loads Lung3 dataset, takes an average 15 mm around the slice with the maximum transversal tumour area.
+        https://wiki.cancerimagingarchive.net/display/Public/NSCLC-Radiomics-Genomics
+    """
     assert n_slices % 2 == 1
 
     master_table = pd.read_csv(os.path.join(lung3_dir, 'Lung3_master.csv'))
@@ -332,6 +346,11 @@ def load_lung3_images_max_tumour_volume_ave(lung3_dir, n_slices, dsize, verbose=
 
 
 def load_radiogenomics_images_max_tumour_volume_ave(radiogenomics_dir, n_slices, dsize, verbose=1):
+    """
+    Loads a subset of the NSCLC Radiogenomics dataset, takes an average 15 mm around the slice with the maximum
+    transversal tumour area.
+        https://wiki.cancerimagingarchive.net/display/Public/NSCLC+Radiogenomics
+    """
     assert n_slices % 2 == 1
 
     radiogenomics_best_slices = np.zeros((RADIOGENOMICS_N_PATIENTS, 1, dsize[0], dsize[1]))
@@ -416,6 +435,11 @@ def load_radiogenomics_images_max_tumour_volume_ave(radiogenomics_dir, n_slices,
 
 
 def load_radiogenomics_amc_images_max_tumour_volume_ave(radiogenomics_dir, n_slices, dsize, verbose=1):
+    """
+    Loads a subset of the NSCLC Radiogenomics dataset, takes an average 15 mm around the slice with the maximum
+    transversal tumour area.
+        https://wiki.cancerimagingarchive.net/display/Public/NSCLC+Radiogenomics
+    """
     assert n_slices % 2 == 1
 
     master_file = pd.read_csv(os.path.join(radiogenomics_dir, 'master_file_amc.csv'))
@@ -473,7 +497,12 @@ def load_radiogenomics_amc_images_max_tumour_volume_ave(radiogenomics_dir, n_sli
 
 
 def load_basel_images_max_tumour_volume_ave(basel_dir, n_slices, dsize, verbose=1):
-    # Code partially taken from: https://github.com/pvk95/PAG
+    """
+    Loads the dataset from the Basel University Hospital.
+    Code adapted from Pattisapu et al.:
+        https://github.com/pvk95/PAG
+    """
+    #
     assert n_slices % 2 == 1
 
     if verbose:
@@ -653,6 +682,9 @@ def load_basel_images_max_tumour_volume_ave(basel_dir, n_slices, dsize, verbose=
 
 
 def preprocess_lung1_images(lung1_dir, n_slices, dsize, n_bins=40, verbose=1):
+    """
+    Preprocesses Lung1 CT images.
+    """
     if os.path.exists(
             '../datasets/nsclc_lung/lung1_best_slices_preprocessed_' + str(n_slices) + '_' + str(dsize[0]) + 'x' + str(
                     dsize[1]) + str('.npy')):
@@ -714,6 +746,9 @@ def preprocess_lung1_images(lung1_dir, n_slices, dsize, n_bins=40, verbose=1):
 
 
 def preprocess_lung3_images(lung3_dir, n_slices, dsize, n_bins=40, verbose=1):
+    """
+    Preprocesses Lung3 CT images.
+    """
     if os.path.exists(
             '../datasets/nsclc_lung/lung3_best_slices_preprocessed_' + str(n_slices) + '_' + str(dsize[0]) + 'x' + str(
                     dsize[1]) + str('.npy')):
@@ -763,6 +798,9 @@ def preprocess_lung3_images(lung3_dir, n_slices, dsize, n_bins=40, verbose=1):
 
 
 def preprocess_radiogenomics_images(radiogenomics_dir, n_slices, dsize, n_bins=40, verbose=1):
+    """
+    Preprocesses a subset of NSCLC Radiogenomics CT images.
+    """
     if os.path.exists('../datasets/nsclc_lung/radiogenomics_best_slices_preprocessed_' + str(n_slices) + '_' + str(
             dsize[0]) + 'x' + str(dsize[1]) + str('.npy')):
         if verbose > 0:
@@ -830,6 +868,9 @@ def preprocess_radiogenomics_images(radiogenomics_dir, n_slices, dsize, n_bins=4
 
 
 def preprocess_radiogenomics_images_amc(radiogenomics_dir, n_slices, dsize, n_bins=40, verbose=1):
+    """
+    Preprocesses a subset of NSCLC Radiogenomics CT images.
+    """
     if os.path.exists('../datasets/nsclc_lung/radiogenomics_amc_best_slices_preprocessed_' + str(n_slices) + '_' + str(
             dsize[0]) + 'x' + str(dsize[1]) + str('.npy')):
         if verbose > 0:
@@ -878,6 +919,9 @@ def preprocess_radiogenomics_images_amc(radiogenomics_dir, n_slices, dsize, n_bi
 
 
 def preprocess_basel_images(basel_dir, n_slices, dsize, n_bins=40, verbose=1):
+    """
+    Preprocesses Basel University Hospital CT images.
+    """
     if os.path.exists(
             '../datasets/nsclc_lung/basel_best_slices_preprocessed_' + str(n_slices) + '_' + str(dsize[0]) + 'x' + str(
                     dsize[1]) + str('.npy')):
@@ -950,6 +994,9 @@ def preprocess_basel_images(basel_dir, n_slices, dsize, n_bins=40, verbose=1):
 
 
 def augment_images(images):
+    """
+    Augments a batch of CT images.
+    """
     images = np.squeeze(images)
     images_augmented = np.zeros(images.shape)
     for i in range(images.shape[0]):
@@ -987,7 +1034,7 @@ def augment_images(images):
     return images_augmented
 
 
-# Augmentations for CT scans
+# Atomic augmentations for CT scans
 def augment_rotate(image, angle_min=-30, angle_max=30):
     theta = np.random.uniform(angle_min, angle_max)
     (h, w) = image.shape[:2]

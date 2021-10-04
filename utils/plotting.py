@@ -1,3 +1,6 @@
+"""
+Utility functions for plotting.
+"""
 import os
 
 import numpy as np
@@ -10,15 +13,23 @@ from matplotlib import rc
 from openTSNE import TSNE as fastTSNE
 
 import sys
+
 sys.path.insert(0, '../')
-from lifelines import CoxPHFitter
-from utils.data_utils import construct_surv_df
 
 CB_COLOR_CYCLE = ['#377eb8', '#ff7f00', '#4daf4a', '#f781bf', '#a65628', '#984ea3', '#999999', '#e41a1c', '#dede00']
 GRAY_COLOR_CYCLE = ['black', 'dimgray', 'darkgray', 'gainsboro', 'whitesmoke']
 LINE_TYPES = ['solid', 'dashed', 'dashdot', 'dotted', 'dashed']
 MARKER_STYLES = ['', '', '', '', '']
 DASH_STYLES = [[], [4, 4], [4, 1], [1, 1, 1], [2, 1, 2]]
+
+
+def plotting_setup(font_size=12):
+    # plot settings
+    plt.style.use("seaborn-colorblind")
+    plt.rcParams['font.size'] = font_size
+    rc('text', usetex=False)
+    plt.rcParams["font.family"] = "Times New Roman"
+    rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
 
 
 def plot_overall_kaplan_meier(t, d, dir=None):
@@ -69,7 +80,6 @@ def plot_bigroup_kaplan_meier(t, d, c, c_, dir=None, postfix=None, legend=False)
         kmf.plot(ci_show=True, color='black', alpha=0.5, linestyle=LINE_TYPES[int(l)], dashes=DASH_STYLES[int(l)], linewidth=5)
 
     plt.xlabel("Time")
-    #plt.xlabel(None)
     plt.ylabel("Survival Probability")
 
     if not legend:
@@ -83,15 +93,6 @@ def plot_bigroup_kaplan_meier(t, d, c, c_, dir=None, postfix=None, legend=False)
         plt.savefig(fname=os.path.join(dir, fname), dpi=300, bbox_inches="tight")
     else:
         plt.show()
-
-
-def plotting_setup(font_size=12):
-    # plot settings
-    plt.style.use("seaborn-colorblind")
-    plt.rcParams['font.size'] = font_size
-    rc('text', usetex=False)
-    plt.rcParams["font.family"] = "Times New Roman"
-    rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
 
 
 def plot_dataset(X, t, d, c, font_size=12, seed=42, dir=None, postfix=None):

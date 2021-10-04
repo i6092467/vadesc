@@ -1,8 +1,15 @@
+"""
+VaDeSC model.
+"""
 import tensorflow as tf
 import tensorflow_probability as tfp
 import os
 
-# pretrain autoencoder
+from models.networks import (VGGEncoder, VGGDecoder, Encoder, Decoder, Encoder_small, Decoder_small)
+
+from utils.utils import weibull_scale, weibull_log_pdf, tensor_slice
+
+# Pretrain autoencoder
 checkpoint_path = "autoencoder/cp.ckpt"
 checkpoint_dir = os.path.dirname(checkpoint_path)
 
@@ -10,10 +17,6 @@ tfd = tfp.distributions
 tfkl = tf.keras.layers
 tfpl = tfp.layers
 tfk = tf.keras
-
-from models.networks import (VGGEncoder, VGGDecoder, Encoder, Decoder, Encoder_small, Decoder_small)
-
-from utils.utils import weibull_scale, weibull_log_pdf, tensor_slice
 
 
 class GMM_Survival(tf.keras.Model):
@@ -28,8 +31,8 @@ class GMM_Survival(tf.keras.Model):
         self.sample_surv = kwargs['sample_surv']
         self.learn_prior = kwargs['learn_prior']
         if isinstance(self.inp_shape, list):
-            self.encoder = VGGEncoder(encoded_size=self.encoded_size)                                                   #Encoder3D(self.encoded_size)
-            self.decoder = VGGDecoder(input_shape=[256, 256, 1], activation='none')                                     #Decoder3D(self.inp_shape)
+            self.encoder = VGGEncoder(encoded_size=self.encoded_size)
+            self.decoder = VGGDecoder(input_shape=[256, 256, 1], activation='none')
         elif self.inp_shape <= 100:
             self.encoder = Encoder_small(self.encoded_size)
             self.decoder = Decoder_small(self.inp_shape, self.activation)
@@ -37,7 +40,6 @@ class GMM_Survival(tf.keras.Model):
             self.encoder = Encoder(self.encoded_size)
             self.decoder = Decoder(self.inp_shape, self.activation)
         self.c_mu = tf.Variable(tf.initializers.GlorotNormal()(shape=[self.num_clusters, self.encoded_size]), name='mu')
-        # Sometimes this initialisation is more stable numerically:
         self.log_c_sigma = tf.Variable(tf.initializers.GlorotNormal()([self.num_clusters, self.encoded_size]), name="sigma")
         # Cluster-specific survival model parameters
         self.c_beta = tf.Variable(tf.initializers.GlorotNormal()(shape=[self.num_clusters, self.encoded_size + 1]),

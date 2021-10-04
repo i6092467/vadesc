@@ -1,4 +1,6 @@
-# Some utility functions for data handling
+"""
+Utility functions for data loading.
+"""
 import tensorflow as tf
 import tensorflow_probability as tfp
 import numpy as np
@@ -6,11 +8,6 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.utils import to_categorical
-
-tfd = tfp.distributions
-tfkl = tf.keras.layers
-tfpl = tfp.layers
-tfk = tf.keras
 
 from datasets.survivalMNIST.survivalMNIST_data import generate_surv_MNIST
 from datasets.simulations import simulate_nonlin_profile_surv
@@ -20,6 +17,11 @@ from datasets.hemodialysis.hemo_data import generate_hemo
 from datasets.nsclc_lung.nsclc_lung_data import generate_lung1_images, generate_radiogenomics_images, \
     generate_radiogenomics_images_amc, generate_lung3_images, generate_basel_images, generate_radiomic_features
 from datasets.nsclc_lung.CT_preproc_utils import augment_images
+
+tfd = tfp.distributions
+tfkl = tf.keras.layers
+tfpl = tfp.layers
+tfk = tf.keras
 
 
 class DataGen(tf.keras.utils.Sequence):

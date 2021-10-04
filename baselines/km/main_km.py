@@ -1,4 +1,6 @@
-# Runs k-means clustering
+"""
+Runs k-means clustering.
+"""
 import argparse
 import numpy as np
 import time
@@ -9,13 +11,14 @@ from sklearn.metrics import normalized_mutual_info_score, adjusted_rand_score
 from sklearn.cluster import KMeans
 
 import sys
-sys.path.insert(0, '../../')
 
 from datasets.survivalMNIST.survivalMNIST_data import generate_surv_MNIST
 from datasets.simulations import simulate_nonlin_profile_surv
 from datasets.hemodialysis.hemo_data import generate_hemo
 
 from utils import utils
+
+sys.path.insert(0, '../../')
 
 
 def get_data(args, val=False):

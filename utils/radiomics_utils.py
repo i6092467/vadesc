@@ -1,3 +1,6 @@
+"""
+Utility functions for extracting radiomics features.
+"""
 import os
 
 import shutil
@@ -10,7 +13,7 @@ import logging
 
 import progressbar
 
-from radiomics import featureextractor, getTestCase, shape2D
+from radiomics import featureextractor
 
 
 def extract_radiomics_features(data_file, masks, verbose=1):

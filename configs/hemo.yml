@@ -5,24 +5,19 @@ data:
 training:
   # Training
   eval_frequency: 200
-  std_shape_generation: [-0, 0]  # minimum/maximum
 
   # Architecture
   inp_shape: 57
   latent_dim: 16
   num_clusters: 2
   activation: "none"
-  type: "FC"
   monte_carlo: 1
   learn_prior: True
 
-  # Optimization.
-  loss_str: 'l2'
-  regularization: 0.0005
-  dropout: 1
+  # Optimization
   learning_rate: 0.001
   decay_rate: 0.99
-  momentum: 0 #0.9
+  momentum: 0
 
   # Survival model
   weibull_shape: 3

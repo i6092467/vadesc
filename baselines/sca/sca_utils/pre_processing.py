@@ -1,5 +1,7 @@
-# Code from Chapfuwa et al.: https://github.com/paidamoyo/survival_cluster_analysis
-# Some utility functions for data pre-processing
+"""
+Some utility functions for data preprocessing taken from Chapfuwa et al.:
+    https://github.com/paidamoyo/survival_cluster_analysis
+"""
 import numpy as np
 import pandas
 

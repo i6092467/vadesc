@@ -1,4 +1,6 @@
-# Some utility functions for numerical simulations
+"""
+Utility functions for numerical simulations.
+"""
 import numpy as np
 
 from sklearn.datasets import make_low_rank_matrix

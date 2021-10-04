@@ -1,3 +1,6 @@
+"""
+Numerical simulations and utility functions for constructing the synthetic dataset.
+"""
 import numpy as np
 from numpy.random import multivariate_normal, uniform, choice
 

@@ -1,14 +1,18 @@
+"""
+Encoder and decoder architectures used by VaDeSC.
+"""
 import tensorflow as tf
 import tensorflow_probability as tfp
+
+from tensorflow.keras import layers
 
 tfd = tfp.distributions
 tfkl = tf.keras.layers
 tfpl = tfp.layers
 tfk = tf.keras
 
-from tensorflow.keras import layers
 
-
+# Wide MLP encoder and decoder architectures
 class Encoder(layers.Layer):
     def __init__(self, encoded_size):
         super(Encoder, self).__init__(name='encoder')
@@ -49,6 +53,7 @@ class Decoder(layers.Layer):
         return x
 
 
+# VGG-based architectures
 class VGGConvBlock(layers.Layer):
     def __init__(self, num_filters, block_id):
         super(VGGConvBlock, self).__init__(name="VGGConvBlock{}".format(block_id))
@@ -103,10 +108,7 @@ class VGGDecoder(layers.Layer):
     def __init__(self, input_shape, activation):
         super(VGGDecoder, self).__init__(name='VGGDecoder')
 
-        #target_shape = (61, 61, 85)
-        #target_shape = (5, 5, 64)  # 32x32
-        target_shape = (13, 13, 64)     # 64x64
-        #target_shape = (29, 29, 64)      # 128x128 images
+        target_shape = (13, 13, 64)     # 64 x 64
 
         self.activation = activation
         self.dense = tfkl.Dense(target_shape[0] * target_shape[1] * target_shape[2])
@@ -115,20 +117,15 @@ class VGGDecoder(layers.Layer):
         self.convT = tfkl.Conv2DTranspose(filters=input_shape[2], kernel_size=3, padding='same')
 
     def call(self, inputs, **kwargs):
-        #print(inputs.shape)
         out = self.dense(inputs[0])
-        #print(out.shape)
         out = self.reshape(out)
-        #print(out.shape)
 
         # Iterate through blocks
         for block in self.layers:
             out = block(out)
-            #print(out.shape)
 
         # Last convolution
         out = self.convT(out)
-        #print(out.shape)
 
         if self.activation == "sigmoid":
             out = tf.sigmoid(out)

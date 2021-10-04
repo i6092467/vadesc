@@ -1,4 +1,8 @@
-# Based on the code from Chapfuwa et al.: https://github.com/paidamoyo/survival_cluster_analysis
+"""
+SUPPORT dataset.
+Based on the code from Chapfuwa et al.:
+    https://github.com/paidamoyo/survival_cluster_analysis
+"""
 import os
 
 import numpy as np

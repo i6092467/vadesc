@@ -1,4 +1,21 @@
-# Based on the code from Chapfuwa et al.: https://github.com/paidamoyo/survival_cluster_analysis
+"""
+FLChain dataset.
+Based on the code from Chapfuwa et al.:
+    https://github.com/paidamoyo/survival_cluster_analysis
+"""
+# age: age in years
+# sex: F=female, M=male
+# sample.yr: the calendar year in which a blood sample was obtained
+# kappa: serum free light chain, kappa portion
+# lambda: serum free light chain, lambda portion
+# flc.grp: the FLC group for the subject, as used in the original analysis
+# creatinine: serum creatinine
+# mgus: 1 if the subject had been diagnosed with monoclonal gammapothy (MGUS)
+# futime: days from enrollment until death. There are 3 subjects whose sample was obtained on their death date.
+# death 0=alive at last contact date, 1=dead
+# chapter: for those who died, a grouping of their primary cause of death by chapter headings of
+# the International Code of Diseases ICD-9
+
 import os
 
 import numpy as np
@@ -8,19 +25,6 @@ from baselines.sca.sca_utils.pre_processing import one_hot_encoder, formatted_da
     one_hot_indices, get_train_median_mode
 
 from sklearn.preprocessing import StandardScaler
-
-# age: age in years
-# sex: F=female, M=male
-# sample.yr: the calendar year in which a blood sample was obtained
-# kappa: serum free light chain, kappa portion
-# lambda: serum free light chain, lambda portion
-# flc.grp: the FLC group for the subject, as used in the original analysis
-# creatinine: serum creatinine
-# mgus: 1 if the subject had been diagnosed with monoclonal gammapothy (MGUS)
-# futime: days from enrollment until death. Note that there are 3 subjects whose sample was obtained on their death date.
-# death 0=alive at last contact date, 1=dead
-# chapter: for those who died, a grouping of their primary cause of death by chapter headings of
-# the International Code of Diseases ICD-9
 
 
 def generate_data(seed):

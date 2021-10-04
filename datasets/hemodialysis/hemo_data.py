@@ -1,3 +1,6 @@
+"""
+Dataset of children undergoing hemodialysis.
+"""
 import numpy as np
 import pandas as pd
 import os
@@ -42,7 +45,7 @@ def generate_hemo(seed=42, label=3):
     c = np.array(c, dtype=np.int64)
     df = pd.get_dummies(df)
 
-    #covariates to exclude (repetition)
+    # Covariates to exclude (repetition)
     no_list = ['PatientRace4_unkown', 'raceB_African', 'fspktv4_(1.56,1.73]', #'fspktv4_[0.784,1.39]',
                'USRDS_class_Etiology uncertain ', 'other', 'tidwg_day', 'tUFR_mLkgh',
                'raceB_other', 'cDeath', 'cTIME', 'PatientIdentifier', 'PatientGender_Male',

@@ -46,7 +46,7 @@ def pretrain(model, args, ex_name, configs):
         dec = tf.reshape(dec, [-1, input_shape[0], input_shape[1],1])
     dec = tfkl.Lambda(lambda x: x, name="dec")(dec)
     autoencoder = tfk.Model(inputs=input, outputs=dec)
-    optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)  # , decay=args.decay)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)#, decay=args.decay)
     autoencoder.compile(optimizer=optimizer, loss={"dec":"mse"})
     autoencoder.summary()
 

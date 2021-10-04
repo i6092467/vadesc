@@ -1,4 +1,6 @@
-# Cox PH model
+"""
+Wrapper for Cox PH model as implemented by lifelines.
+"""
 import numpy as np
 
 from lifelines import CoxPHFitter

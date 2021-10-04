@@ -1,4 +1,7 @@
-# Runs SSC-Bair clustering
+"""
+Runs semi-supervised clustering of survival data as described by Bair & Tibshirani.
+"""
+
 import argparse
 
 import numpy as np

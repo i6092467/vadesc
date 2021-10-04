@@ -1,14 +1,11 @@
-# Some utility functions for model comparison
-
+"""
+Utility functions for model evaluation.
+"""
 import numpy as np
 
 from lifelines.utils import concordance_index
 
 import sys
-
-sys.path.insert(0, '../')
-
-from utils.plotting import plot_group_kaplan_meier
 
 from sklearn.utils.linear_assignment_ import linear_assignment
 from sklearn.metrics.cluster import normalized_mutual_info_score
@@ -18,6 +15,8 @@ from lifelines import KaplanMeierFitter
 
 from scipy import stats
 from scipy.stats import linregress
+
+sys.path.insert(0, '../')
 
 
 def accuracy_metric(inp, p_c_z):
@@ -35,11 +34,6 @@ def cindex_metric(inp, risk_scores):
     return tf.cond(tf.reduce_any(tf.math.is_nan(risk_scores)),
                    lambda: tf.numpy_function(cindex, [t, d, tf.zeros_like(risk_scores)], tf.float64),
                    lambda: tf.numpy_function(cindex, [t, d, risk_scores], tf.float64))
-    # if tf.reduce_any(tf.math.is_nan(risk_scores)):
-    #     Warning("NaNs in risk scores!")
-    #     return tf.numpy_function(cindex, [t, d, tf.zeros_like(risk_scores)], tf.float64)
-    # else:
-    #     return tf.numpy_function(cindex, [t, d, risk_scores], tf.float64)
 
 
 def cindex(t: np.ndarray, d: np.ndarray, scores_pred: np.ndarray):
@@ -161,7 +155,7 @@ def compute_km_dist(predicted_samples, t_empirical_range, event):
 
 def cluster_acc(y_true, y_pred):
     """
-    Calculate clustering accuracy. Requires scikit-learn installed
+    Calculate clustering accuracy.
     # Arguments
         y: true labels, numpy.array with shape `(n_samples,)`
         y_pred: predicted labels, numpy.array with shape `(n_samples,)`
