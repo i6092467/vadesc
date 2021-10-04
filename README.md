@@ -51,9 +51,7 @@ File `main.py` trains and evaluates the VaDeSC model. It accepts following argum
   --seed SEED           random number generator seed
   --eager EAGER         specifies if the TF functions should be run eagerly
 ```
-Folder `/configs` contains `.yml` files which further sepcify the configuration of the model for each experiment.
-
-Folder `/bin` contains shell scripts for running clustering and time-to-event prediction experiments:
+Folder `/configs` contains `.yml` files which further sepcify the configuration of the model for each experiment. Folder `/bin` contains shell scripts for running clustering and time-to-event prediction experiments:
 - **Synthetic**: `run_vadesc_sim`
 - **survMNIST**: `run_vadesc_mnist`
 - **SUPPORT**: `run_vadesc_support`
