@@ -7,8 +7,8 @@ This repository holds the code for clustering survival data using the **<u>va</u
 All required libraries are included in the conda environment specified by `environment.yml`. To install and activate it, follow the instructions below:
 
 ```
-conda env create -f environment.yml  # install dependencies
-conda activate Survival_Cluster_Analysis  # activate environment
+conda env create -f environment.yml         # install dependencies
+conda activate Survival_Cluster_Analysis    # activate environment
 ```
 
 ### Usage
@@ -65,4 +65,4 @@ The VaDeSC model is implemented in `/models/model.py`. Encoder and decoder archi
 ### Acknowledgements
 
 - survMNIST code is based on [Sebastian Pölsterl's tutorial](https://github.com/sebp/survival-cnn-estimator)
-- SUPPORT and FLChain datasets and utility functions for data preprocessing were taken from Chapfuwa et al.'s [SCA repository](https://github.com/paidamoyo/survival_cluster_analysis) and Nagpal et al.'s [DCM repository](https://github.com/chiragnagpal/deep_cox_mixtures)
+- SUPPORT and FLChain datasets and utility functions for data preprocessing were taken from Chapfuwa *et al.*'s [SCA repository](https://github.com/paidamoyo/survival_cluster_analysis) and Nagpal *et al.*'s [DCM repository](https://github.com/chiragnagpal/deep_cox_mixtures)
