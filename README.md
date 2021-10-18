@@ -32,7 +32,7 @@ File `main.py` trains and evaluates the VaDeSC model. It accepts following argum
   --weibull_shape WEIBULL_SHAPE
                         the Weibull shape parameter (global)
   --no-survival         specifies if the survival model should not be included
-  --dsa                 specifies if the deep survival analysis with k-means shuld be run
+  --dsa                 specifies if the deep survival analysis with k-means should be run
   --dsa_k DSA_K         number of clusters in deep survival analysis with k-means
   --eval-cal EVAL_CAL   specifies if the calibration needs to be evaluated
   --runs RUNS           the number of runs, the results will be averaged
