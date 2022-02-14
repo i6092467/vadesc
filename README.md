@@ -1,6 +1,32 @@
-# Variational Deep Survival Clustering
+# A Deep Variational Approach to Clustering Survival Data
 
-This repository holds the code for clustering survival data using the **<u>va</u>riational <u>de</u>ep <u>s</u>urvival <u>c</u>lustering (VaDeSC)** model, a novel probabilistic approach to cluster survival data in a variational deep clustering setting. This method employs a deep generative model to uncover the underlying distribution of both the explanatory variables and the potentially censored survival times.
+This repository holds the official code for the paper "Deep Variational Approach to Clustering Survival Data" [(link to paper)](https://openreview.net/forum?id=RQ428ZptQfU), accepted at ICRL 2022.
+
+<img align="right" src="https://user-images.githubusercontent.com/32577028/153891639-ecc481c3-3652-47b9-aa31-3d2880d53858.png" width="300" />  
+
+### Motivation
+
+In this work, we study the problem of clustering survival data — a challenging and
+so far under-explored task. 
+The figure on the right schematically depicts this
+clustering problem: here, the overall patient population consists of three groups characterised by
+different associations between the covariates and survival, resulting in disparate clinical conditions.
+The survival distributions do not need to differ between clusters: compare groups 1 and 3. The identification of such
+patient subpopulations could, for example, facilitate a better understanding of a disease and a more
+personalised disease management. 
+
+
+### Method
+
+<img align="right" src="https://user-images.githubusercontent.com/32577028/153889328-bd437e81-551b-4ef7-af24-85d6adbc2c01.png" width="300" />
+
+We introduce a novel semi-supervised probabilistic approach, the **<u>va</u>riational <u>de</u>ep <u>s</u>urvival <u>c</u>lustering (VaDeSC)**, to discovers groups of patients characterised by different generative mechanisms of survival outcome. 
+The proposed method employs a deep generative model to uncover the underlying distribution of both the explanatory variables and censored survival times. The figure on the right provides
+a schematic summary of the proposed approach: the input vector x is mapped to a latent representation z using
+a VAE regularised by a Gaussian mixture prior. The survival density function is given by a mixture of Weibull
+distributions with cluster-specific parameters β. The parameters of the Gaussian mixture and the Weibull distributions are then optimised jointly using both the explanatory input variables and survival outcomes.
+
+
 
 ### Requirements
 
