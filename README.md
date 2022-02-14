@@ -2,6 +2,10 @@
 
 This repository holds the official code for the paper "Deep Variational Approach to Clustering Survival Data" [(link to paper)](https://openreview.net/forum?id=RQ428ZptQfU), accepted at ICRL 2022.
 
+<p align="center">
+<img src="https://user-images.githubusercontent.com/32577028/153908787-9961771f-8745-4dac-8e92-23076c0ecf94.png" width="1000" />  
+  </p>
+
 <img align="right" src="https://user-images.githubusercontent.com/32577028/153891639-ecc481c3-3652-47b9-aa31-3d2880d53858.png" width="300" />  
 
 ### Motivation
