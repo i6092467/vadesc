@@ -60,18 +60,6 @@ def main():
                         default=0.00001,
                         type=float,
                         help='the decay')
-    parser.add_argument('--decay_rate',
-                        default=0.9,
-                        type=float,
-                        help='the decay rate for the learning rate schedule')
-    parser.add_argument('--epochs_lr',
-                        default=10,
-                        type=int,
-                        help='the number of epochs before dropping down the learning rate')
-    parser.add_argument('--lrs',
-                        default=False,
-                        type=bool,
-                        help='specifies if the learning rate schedule is to be used')
     parser.add_argument('--weibull_shape',
                         default=1.0,
                         type=float,
