@@ -1,6 +1,6 @@
 # A Deep Variational Approach to Clustering Survival Data
 
-This repository holds the official code for the paper "[*A Deep Variational Approach to Clustering Survival Data*](https://openreview.net/forum?id=RQ428ZptQfU)", accepted at [ICRL 2022](https://openreview.net/group?id=ICLR.cc/2022/Conference).
+This repository holds the official code for the paper "[*A Deep Variational Approach to Clustering Survival Data*](https://openreview.net/forum?id=RQ428ZptQfU)", accepted at [ICRL 2022](https://openreview.net/group?id=ICLR.cc/2022/Conference). A short explanation of the method is provided in this [talk](https://slideslive.com/38955419).
 
 ### Contents
 
@@ -39,7 +39,7 @@ distributions with cluster-specific parameters <img src="https://render.githubus
 
 ### Requirements
 
-All required libraries are included in the conda environment specified by `environment.yml`. To install and activate it, follow the instructions below:
+All required libraries are included in the conda environment specified by [`environment.yml`](https://github.com/i6092467/vadesc/blob/main/environment.yml). To install and activate it, follow the instructions below:
 
 ```
 conda env create -f environment.yml         # install dependencies
@@ -48,7 +48,7 @@ conda activate Survival_Cluster_Analysis    # activate environment
 
 ### Usage
 
-File `main.py` trains and evaluates the VaDeSC model. It accepts following arguments:
+File [`main.py`](https://github.com/i6092467/vadesc/blob/main/main.py) trains and evaluates the VaDeSC model. It accepts following arguments:
 
 ```
 --data {mnist,sim,support,flchain,hgg,hemo,lung1,nsclc,nsclc_features,basel}
@@ -81,16 +81,16 @@ File `main.py` trains and evaluates the VaDeSC model. It accepts following argum
   --seed SEED           random number generator seed
   --eager EAGER         specifies if the TF functions should be run eagerly
 ```
-Folder `/configs` contains `.yml` files which further sepcify the configuration of the model for each experiment. Folder `/bin` contains shell scripts for running clustering and time-to-event prediction experiments:
-- **Synthetic**: `run_vadesc_sim`
-- **survMNIST**: `run_vadesc_mnist`
-- **SUPPORT**: `run_vadesc_support`
-- **FLChain**: `run_vadesc_flchain`
-- **HGG**: `run_vadesc_hgg`
-- **Hemodialysis**: `run_vadesc_hemo`
-- **NSCLC**: `run_vadesc_nsclc`
+Folder [`/configs`](https://github.com/i6092467/vadesc/tree/main/configs) contains `.yml` files which further sepcify the configuration of the model for each experiment. Folder [`/bin`](https://github.com/i6092467/vadesc/tree/main/bin) contains shell scripts for running clustering and time-to-event prediction experiments:
+- **Synthetic**: [`run_vadesc_sim`](https://github.com/i6092467/vadesc/blob/main/bin/run_vadesc_sim)
+- **survMNIST**: [`run_vadesc_mnist`](https://github.com/i6092467/vadesc/blob/main/bin/run_vadesc_mnist)
+- **SUPPORT**: [`run_vadesc_support`](https://github.com/i6092467/vadesc/blob/main/bin/run_vadesc_support)
+- **FLChain**: [`run_vadesc_flchain`](https://github.com/i6092467/vadesc/blob/main/bin/run_vadesc_flchain)
+- **HGG**: [`run_vadesc_hgg`](https://github.com/i6092467/vadesc/blob/main/bin/run_vadesc_hgg)
+- **Hemodialysis**: [`run_vadesc_hemo`](https://github.com/i6092467/vadesc/blob/main/bin/run_vadesc_hemo)
+- **NSCLC**: [`run_vadesc_nsclc`](https://github.com/i6092467/vadesc/blob/main/bin/run_vadesc_nsclc)
 
-The VaDeSC model is implemented in `/models/model.py`. Encoder and decoder architectures are specified in `/models/networks.py`. Data loaders are provided in the `/datasets` folder. HGG, Hemodialysis, and NSCLC datasets are not included in the repository due to the medical confidentiality. Code for *post hoc* explanations of cluster assignments is available in the `/post_hoc_explanations` folder.
+The VaDeSC model is implemented in [`/models/model.py`](https://github.com/i6092467/vadesc/blob/main/models/model.py). Encoder and decoder architectures are specified in [`/models/networks.py`](https://github.com/i6092467/vadesc/blob/main/models/networks.py). Data loaders are provided in the [`/datasets`](https://github.com/i6092467/vadesc/tree/main/datasets) folder. HGG, Hemodialysis, and NSCLC datasets are not included in the repository due to the medical confidentiality. Code for *post hoc* explanations of cluster assignments is available in the [`/post_hoc_explanations`](https://github.com/i6092467/vadesc/tree/main/posthoc_explanations) folder.
 
 ### Acknowledgements
 
