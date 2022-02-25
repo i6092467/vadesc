@@ -1,6 +1,6 @@
 # A Deep Variational Approach to Clustering Survival Data
 
-This repository holds the official code for the paper "[*A Deep Variational Approach to Clustering Survival Data*](https://openreview.net/forum?id=RQ428ZptQfU)", accepted at [ICRL 2022](https://openreview.net/group?id=ICLR.cc/2022/Conference). A short explanation of the method is provided in this [talk](https://slideslive.com/38955419).
+This repository holds the official code for the paper "[*A Deep Variational Approach to Clustering Survival Data*](https://openreview.net/forum?id=RQ428ZptQfU)", accepted at [ICLR 2022](https://openreview.net/group?id=ICLR.cc/2022/Conference). A short explanation of the method is provided in this [talk](https://slideslive.com/38955419).
 
 ### Contents
 
