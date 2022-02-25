@@ -1,6 +1,17 @@
 # A Deep Variational Approach to Clustering Survival Data
 
-This repository holds the official code for the paper "[*Deep Variational Approach to Clustering Survival Data*](https://openreview.net/forum?id=RQ428ZptQfU)", accepted at [ICRL 2022](https://openreview.net/group?id=ICLR.cc/2022/Conference).
+This repository holds the official code for the paper "[*A Deep Variational Approach to Clustering Survival Data*](https://openreview.net/forum?id=RQ428ZptQfU)", accepted at [ICRL 2022](https://openreview.net/group?id=ICLR.cc/2022/Conference).
+
+### Contents
+
+- [Motivation](#motivation)  
+- [Method](#method)
+- [Requirements](#requirements)
+- [Usage](#usage)
+- [Acknowledgements](#acknowledgements)
+- [Maintainers](#maintainers)
+- [References](#references)
+- [Citation](#citation)
 
 <p align="center">
 <img src="https://user-images.githubusercontent.com/32577028/153908787-9961771f-8745-4dac-8e92-23076c0ecf94.png" width="1000" />  
@@ -15,7 +26,7 @@ latent representations from the Gaussian mixture learnt by VaDeSC and (ii) decod
 ### Motivation
 
 In this work, we study the problem of clustering survival data — a challenging and so far under-explored task. The figure on the right schematically depicts this clustering problem: here, the overall patient population consists of three groups characterised by different associations between the covariates and survival, resulting in disparate clinical conditions. The survival distributions do not need to differ between clusters: compare groups 1 and 3. The identification of such patient subpopulations could, for example, facilitate a better understanding of a disease and a more personalised disease management. 
-  
+
 ### Method
 
 <img align="right" src="https://user-images.githubusercontent.com/32577028/153889328-bd437e81-551b-4ef7-af24-85d6adbc2c01.png" width="300" />
