@@ -1,6 +1,6 @@
 # A Deep Variational Approach to Clustering Survival Data
 
-This repository holds the official code for the paper "[Deep Variational Approach to Clustering Survival Data](https://openreview.net/forum?id=RQ428ZptQfU)", accepted at ICRL 2022.
+This repository holds the official code for the paper "[*Deep Variational Approach to Clustering Survival Data*](https://openreview.net/forum?id=RQ428ZptQfU)", accepted at ICRL 2022.
 
 <p align="center">
 <img src="https://user-images.githubusercontent.com/32577028/153908787-9961771f-8745-4dac-8e92-23076c0ecf94.png" width="1000" />  
@@ -14,27 +14,17 @@ latent representations from the Gaussian mixture learnt by VaDeSC and (ii) decod
 
 ### Motivation
 
-In this work, we study the problem of clustering survival data — a challenging and
-so far under-explored task. 
-The figure on the right schematically depicts this
-clustering problem: here, the overall patient population consists of three groups characterised by
-different associations between the covariates and survival, resulting in disparate clinical conditions.
-The survival distributions do not need to differ between clusters: compare groups 1 and 3. The identification of such
-patient subpopulations could, for example, facilitate a better understanding of a disease and a more
-personalised disease management. 
-
-
+In this work, we study the problem of clustering survival data — a challenging and so far under-explored task. The figure on the right schematically depicts this clustering problem: here, the overall patient population consists of three groups characterised by different associations between the covariates and survival, resulting in disparate clinical conditions. The survival distributions do not need to differ between clusters: compare groups 1 and 3. The identification of such patient subpopulations could, for example, facilitate a better understanding of a disease and a more personalised disease management. 
+  
 ### Method
 
 <img align="right" src="https://user-images.githubusercontent.com/32577028/153889328-bd437e81-551b-4ef7-af24-85d6adbc2c01.png" width="300" />
 
 We introduce a novel semi-supervised probabilistic approach, the **<u>va</u>riational <u>de</u>ep <u>s</u>urvival <u>c</u>lustering (VaDeSC)**, to discovers groups of patients characterised by different generative mechanisms of survival outcome. 
 The proposed method employs a deep generative model to uncover the underlying distribution of both the explanatory variables and censored survival times. The figure on the right provides
-a schematic summary of the proposed approach: the input vector x is mapped to a latent representation z using
+a schematic summary of the proposed approach: the input vector <img src="https://render.githubusercontent.com/render/math?math=\boldsymbol{x}"> is mapped to a latent representation <img src="https://render.githubusercontent.com/render/math?math=\boldsymbol{z}"> using
 a VAE regularised by a Gaussian mixture prior. The survival density function is given by a mixture of Weibull
-distributions with cluster-specific parameters β. The parameters of the Gaussian mixture and the Weibull distributions are then optimised jointly using both the explanatory input variables and survival outcomes.
-
-
+distributions with cluster-specific parameters <img src="https://render.githubusercontent.com/render/math?math=\boldsymbol{\beta}">. The parameters of the Gaussian mixture and the Weibull distributions are then optimised jointly using both the explanatory input variables and survival outcomes.
 
 ### Requirements
 
@@ -95,3 +85,32 @@ The VaDeSC model is implemented in `/models/model.py`. Encoder and decoder archi
 
 - survMNIST code is based on [Sebastian Pölsterl's tutorial](https://github.com/sebp/survival-cnn-estimator)
 - SUPPORT and FLChain datasets and utility functions for data preprocessing were taken from Chapfuwa *et al.*'s [SCA repository](https://github.com/paidamoyo/survival_cluster_analysis) and Nagpal *et al.*'s [DCM repository](https://github.com/chiragnagpal/deep_cox_mixtures)
+
+### Maintainers
+
+- Laura Manduchi ([laura.manduchi@inf.ethz.ch](mailto:laura.manduchi@inf.ethz.ch))
+- Ričards Marcinkevičs ([ricards.marcinkevics@inf.ethz.ch](mailto:ricards.marcinkevics@inf.ethz.ch))
+
+### References
+
+Below are some references helpful for understanding our method:
+- E. Bair and R. Tibshirani. Semi-supervised methods to predict patient survival from gene expression data. *PLoS Biology*, 2(4):e108, 2004.
+- N. Dilokthanakul, P. A. M. Mediano, M. Garnelo, M. C. H. Lee, H. Salimbeni, K. Arulkumaran, and M. Shanahan. Deep unsupervised clustering with Gaussian mixture variational autoencoders, 2016. *arXiv:1611.02648*.
+- Z. Jiang, Y. Zheng, H. Tan, B. Tang, and H. Zhou. Variational deep embedding: An unsupervised and generative approach to clustering. In *Proceedings of the 26th International Joint Conference on Artificial Intelligence*, pp. 1965–1972. AAAI Press, 2017.
+- S. Liverani, L. Leigh, I. L. Hudson, and J. E. Byles. Clustering method for censored and collinear survival data. *Computational Statistics*, 2020.
+- P. Chapfuwa, C. Li, N. Mehta, L. Carin, and R. Henao. Survival cluster analysis. In *Proceedings of the ACM Conference on Health, Inference, and Learning*, pp. 60–68. Association for Computing Machinery, 2020.
+- C. Nagpal, X. R. Li, and A. Dubrawski. Deep survival machines: Fully parametric survival regression and representation learning for censored data with competing risks. *IEEE Journal of Biomedical and Health Informatics*, 2021.
+
+### Citation
+
+```
+@inproceedings{ManduchiMarcinkevics2022,
+  title={A Deep Variational Approach to Clustering Survival Data},
+  author={Laura Manduchi and Ri{\v{c}}ards Marcinkevi{\v{c}}s and Michela C. Massi 
+          and Thomas Weikert and Alexander Sauter and Verena Gotta 
+          and Timothy M{\"u}ller and Flavio Vasella and Marian C. Neidert 
+          and Marc Pfister and Bram Stieltjes and Julia E Vogt},
+  booktitle={International Conference on Learning Representations},
+  year={2021},
+}
+```
