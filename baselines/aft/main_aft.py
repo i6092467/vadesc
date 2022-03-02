@@ -17,9 +17,12 @@ from lifelines import WeibullAFTFitter
 
 import sys
 
+sys.path.insert(0, '../../')
+
 from datasets.support.support_data import generate_support
 from datasets.hgg.hgg_data import generate_hgg
 from datasets.nsclc_lung.nsclc_lung_data import generate_radiomic_features
+from datasets.simulations import simulate_nonlin_profile_surv
 
 from utils.data_utils import construct_surv_df
 
@@ -31,13 +34,12 @@ from utils.eval_utils import rae as RAE
 
 from utils import utils
 
-sys.path.insert(0, '../../')
-
 
 def get_data(args, val=False):
     if args.data == 'support':
         x_train, x_valid, x_test, t_train, t_valid, t_test, d_train, d_valid, d_test, c_train, c_valid, c_test = \
             generate_support(seed=args.seed)
+
     elif args.data == "flchain":
         data = pd.read_csv('../DCM/data/flchain.csv')
         feats = ['age', 'sex', 'sample.yr', 'kappa', 'lambda', 'flc.grp', 'creatinine', 'mgus']
@@ -55,9 +57,34 @@ def get_data(args, val=False):
     elif args.data == 'hgg':
         x_train, x_valid, x_test, t_train, t_valid, t_test, d_train, d_valid, d_test, c_train, c_valid, c_test = \
             generate_hgg(seed=args.seed)
+
     elif args.data == 'nsclc':
         x_train, x_valid, x_test, t_train, t_valid, t_test, d_train, d_valid, d_test, c_train, c_valid, c_test = \
             generate_radiomic_features(n_slices=11, dsize=[256, 256], seed=args.seed)
+
+    elif args.data == "sim":
+        X, t, d, c, Z, mus, sigmas, betas, betas_0, mlp_dec = simulate_nonlin_profile_surv(p=1000, n=60000,
+                                                                                           latent_dim=16,
+                                                                                           k=args.num_clusters,
+                                                                                           p_cens=.9, seed=args.seed,
+                                                                                           clust_mean=True,
+                                                                                           clust_cov=True,
+                                                                                           clust_coeffs=True,
+                                                                                           clust_intercepts=True,
+                                                                                           balanced=True,
+                                                                                           weibull_k=1,
+                                                                                           brange=[-10.0, 10.0],
+                                                                                           isotropic=True,
+                                                                                           xrange=[-.5, .5])
+        # Normalisation
+        t = t / np.max(t) + 0.001
+        scaler = StandardScaler()
+        scaler.fit(X)
+        X = scaler.transform(X)
+
+        x_train, x_test, t_train, t_test, d_train, d_test, c_train, c_test = train_test_split(X, t, d, c, test_size=.3,
+                                                                                              random_state=args.seed)
+
     else:
         NotImplementedError('This dataset is not supported!')
 
@@ -109,6 +136,8 @@ def run_experiment(args):
         f = open("results_HGG_AFT.txt", "a+")
     elif args.data == 'nsclc':
         f = open("results_nsclc_AFT.txt", "a+")
+    elif args.data == 'sim':
+        f = open("results_sim_AFT.txt", "a+")
 
     f.write("weight_penalty= %f, name= %s, seed= %d.\n" % (args.penalty_weight, ex_name, args.seed))
     f.write("Train  |   CI: %f, RAE (nc.): %f, RAE (c.): %f.\n" % (ci, rae_nc, rae_c))
@@ -123,9 +152,13 @@ def run_experiment(args):
 
     lambda_, rho_ = aft._prep_inputs_for_prediction_and_return_scores(df, ancillary_X=None)
     t_sample = utils.sample_weibull(scales=lambda_, shape=rho_)
-    cal = calibration(predicted_samples=t_sample, t=y_test[:, 0], d=y_test[:, 1])
+    if args.data != 'sim':
+        cal = calibration(predicted_samples=t_sample, t=y_test[:, 0], d=y_test[:, 1])
 
-    f.write("Test   |   CI: %f, RAE (nc.): %f, RAE (c.): %f, CAL: %f.\n" % (ci, rae_nc, rae_c, cal))
+    if args.data != 'sim':
+        f.write("Test   |   CI: %f, RAE (nc.): %f, RAE (c.): %f, CAL: %f.\n" % (ci, rae_nc, rae_c, cal))
+    else:
+        f.write("Test   |   CI: %f, RAE (nc.): %f, RAE (c.): %f.\n" % (ci, rae_nc, rae_c))
     f.close()
     print(str(ci))
 
@@ -136,8 +169,8 @@ def main():
     parser.add_argument('--data',
                         default='support',
                         type=str,
-                        choices=['support', 'flchain', 'hgg', 'nsclc'],
-                        help='specify the data (support, flchain, hgg, nsclc)')
+                        choices=['support', 'flchain', 'hgg', 'nsclc', 'sim'],
+                        help='specify the data (support, flchain, hgg, nsclc, sim)')
     parser.add_argument('--num_clusters',
                         default=5,
                         type=int,
