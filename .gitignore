@@ -36,3 +36,5 @@ models/Ours/pretrain/*
 models/pretrain/*
 
 figures/*
+
+.ipynb_checkpoints/
