@@ -14,11 +14,6 @@ training:
   monte_carlo: 1
   learn_prior: True
 
-  # Optimization
-  learning_rate: 0.001
-  decay_rate: 0.99
-  momentum: 0
-
   # Survival model
   weibull_shape: 3
   survival: True

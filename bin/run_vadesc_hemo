@@ -4,13 +4,13 @@
 eval "$(conda shell.bash hook)"
 conda activate Survival_Cluster_Analysis
 
-python ../main.py --data hemo --seed 42 --num_epochs 500 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
-python ../main.py --data hemo --seed 73 --num_epochs 500 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
-python ../main.py --data hemo --seed 666 --num_epochs 500 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
-python ../main.py --data hemo --seed 777 --num_epochs 500 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
-python ../main.py --data hemo --seed 1009 --num_epochs 500 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
-python ../main.py --data hemo --seed 1279 --num_epochs 500 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
-python ../main.py --data hemo --seed 1597 --num_epochs 500 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
-python ../main.py --data hemo --seed 1811 --num_epochs 500 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
-python ../main.py --data hemo --seed 1949 --num_epochs 500 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
-python ../main.py --data hemo --seed 2053 --num_epochs 500 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
+python ../main.py --data hemo --seed 42 --num_epochs 500 --lr 0.002 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
+python ../main.py --data hemo --seed 73 --num_epochs 500 --lr 0.002 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
+python ../main.py --data hemo --seed 666 --num_epochs 500 --lr 0.002 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
+python ../main.py --data hemo --seed 777 --num_epochs 500 --lr 0.002 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
+python ../main.py --data hemo --seed 1009 --num_epochs 500 --lr 0.002 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
+python ../main.py --data hemo --seed 1279 --num_epochs 500 --lr 0.002 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
+python ../main.py --data hemo --seed 1597 --num_epochs 500 --lr 0.002 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
+python ../main.py --data hemo --seed 1811 --num_epochs 500 --lr 0.002 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
+python ../main.py --data hemo --seed 1949 --num_epochs 500 --lr 0.002 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1
+python ../main.py --data hemo --seed 2053 --num_epochs 500 --lr 0.002 --pretrain True --compute_pretrain_weights True --epochs_pretrain 1

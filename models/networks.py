@@ -40,7 +40,6 @@ class Decoder(layers.Layer):
         self.dense2 = tfkl.Dense(500, activation='relu')
         self.dense3 = tfkl.Dense(500, activation='relu')
         if activation == "sigmoid":
-            print("yeah")
             self.dense4 = tfkl.Dense(self.inp_shape, activation="sigmoid")
         else:
             self.dense4 = tfkl.Dense(self.inp_shape)

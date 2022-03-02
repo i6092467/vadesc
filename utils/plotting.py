@@ -28,8 +28,6 @@ def plotting_setup(font_size=12):
     plt.style.use("seaborn-colorblind")
     plt.rcParams['font.size'] = font_size
     rc('text', usetex=False)
-    plt.rcParams["font.family"] = "Times New Roman"
-    rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
 
 
 def plot_overall_kaplan_meier(t, d, dir=None):
