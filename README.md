@@ -51,7 +51,7 @@ conda activate Survival_Cluster_Analysis    # activate environment
 File [`main.py`](https://github.com/i6092467/vadesc/blob/main/main.py) trains and evaluates the VaDeSC model. It accepts following arguments:
 
 ```
---data {mnist,sim,support,flchain,hgg,hemo,lung1,nsclc,nsclc_features,basel}
+  --data {mnist,sim,support,flchain,hgg,hemo,lung1,nsclc,nsclc_features,basel}
                         the dataset
   --num_epochs NUM_EPOCHS
                         the number of training epochs
