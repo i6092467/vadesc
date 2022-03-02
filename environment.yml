@@ -206,8 +206,12 @@ dependencies:
     - attrs==19.3.0
     - autograd==1.3
     - autograd-gamma==0.5.0
+    - cleo==0.8.1
+    - clikit==0.6.2
+    - crashtest==0.3.1
     - cvxopt==1.2.5
     - cvxpy==1.1.7
+    - dcmrtstruct2nii==1.0.19
     - dill==0.3.3
     - dm-tree==0.1.5
     - docopt==0.6.2
@@ -229,12 +233,14 @@ dependencies:
     - opt-einsum==3.3.0
     - osqp==0.6.2
     - pandas==1.1.4
+    - pastel==0.2.1
     - progressbar==2.5
     - promise==2.3
     - pyarrow==2.0.0
     - pydicom==2.1.2
     - pydicom-seg==0.2.3
     - pykwalify==1.8.0
+    - pylev==1.4.0
     - pyqt5==5.15.2
     - pyqt5-sip==12.8.1
     - pyradiomics==3.0.1
@@ -250,9 +256,11 @@ dependencies:
     - simpleitk==2.0.2
     - sklearn==0.0
     - source==1.2.0
+    - tabulate==0.8.9
     - tensorboard==2.4.1
     - tensorboard-logger==0.1.0
     - tensorflow==2.4.0rc0
+    - tensorflow-determinism==0.3.0
     - tensorflow-gpu==2.4.0rc0
     - tensorflow-gpu-estimator==2.3.0
     - tensorflow-metadata==0.26.0
