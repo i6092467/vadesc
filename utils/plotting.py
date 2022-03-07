@@ -54,7 +54,7 @@ def plot_group_kaplan_meier(t, d, c, dir=None, experiment_name=''):
         plt.show()
 
 
-def plot_bigroup_kaplan_meier(t, d, c, c_, dir=None, postfix=None, legend=False):
+def plot_bigroup_kaplan_meier(t, d, c, c_, dir=None, postfix=None, legend=False, legend_outside=False):
     fig = plt.figure()
 
     # Plot true clusters
@@ -72,16 +72,22 @@ def plot_bigroup_kaplan_meier(t, d, c, c_, dir=None, postfix=None, legend=False)
     for l in labels:
         kmf = KaplanMeierFitter()
         if legend:
-            kmf.fit(t[c_ == l], d[c_ == l], label="Assigned cluster " + str(int(l + 1)))
+            kmf.fit(t[c_ == l], d[c_ == l], label="Ass. cluster " + str(int(l + 1)))
         else:
             kmf.fit(t[c_ == l], d[c_ == l])
-        kmf.plot(ci_show=True, color='black', alpha=0.5, linestyle=LINE_TYPES[int(l)], dashes=DASH_STYLES[int(l)], linewidth=5)
+        kmf.plot(ci_show=True, color='black', alpha=0.25, linestyle=LINE_TYPES[int(l)], dashes=DASH_STYLES[int(l)],
+                 linewidth=5)
 
     plt.xlabel("Time")
     plt.ylabel("Survival Probability")
 
-    if not legend:
-        plt.legend('', frameon=False)
+    if legend:
+        if legend_outside:
+            leg = plt.legend(loc='upper right', frameon=False, bbox_to_anchor=(-0.15, 1))
+        else:
+            leg = plt.legend(loc='lower right', frameon=False)
+    else:
+        leg = plt.legend('', frameon=False)
 
     if dir is not None:
         fname = 'km_bigroup_plot'
