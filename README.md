@@ -92,7 +92,7 @@ Folder [`/configs`](https://github.com/i6092467/vadesc/tree/main/configs) contai
 
 The VaDeSC model is implemented in [`/models/model.py`](https://github.com/i6092467/vadesc/blob/main/models/model.py). Encoder and decoder architectures are specified in [`/models/networks.py`](https://github.com/i6092467/vadesc/blob/main/models/networks.py). Data loaders are provided in the [`/datasets`](https://github.com/i6092467/vadesc/tree/main/datasets) folder. HGG, Hemodialysis, and NSCLC datasets are not included in the repository due to the medical confidentiality. Code for *post hoc* explanations of cluster assignments is available in the [`/post_hoc_explanations`](https://github.com/i6092467/vadesc/tree/main/posthoc_explanations) folder.
 
-**Feeling lost?** Follow [this Jupyter notebook](https://github.com/i6092467/vadesc/blob/main/notebooks/example.ipynb) to get started!
+**Feeling lost? 🆘** Follow [this Jupyter notebook](https://github.com/i6092467/vadesc/blob/main/notebooks/example.ipynb) to get started!
 
 ### Acknowledgements
 
