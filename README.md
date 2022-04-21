@@ -114,7 +114,7 @@ Below are some references helpful for understanding our method:
 - P. Chapfuwa, C. Li, N. Mehta, L. Carin, and R. Henao. Survival cluster analysis. In *Proceedings of the ACM Conference on Health, Inference, and Learning*, pp. 60–68. Association for Computing Machinery, 2020.
 - C. Nagpal, X. R. Li, and A. Dubrawski. Deep survival machines: Fully parametric survival regression and representation learning for censored data with competing risks. *IEEE Journal of Biomedical and Health Informatics*, 2021.
 
-### Citation
+### 🙂 Citation
 
 ```
 @inproceedings{ManduchiMarcinkevics2022,
