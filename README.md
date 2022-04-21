@@ -2,7 +2,7 @@
 
 This repository holds the official code for the paper "[*A Deep Variational Approach to Clustering Survival Data*](https://openreview.net/forum?id=RQ428ZptQfU)", accepted at [ICLR 2022](https://openreview.net/group?id=ICLR.cc/2022/Conference). A short explanation of the method is provided in this [talk](https://slideslive.com/38955419), poster can be viewed [here](https://github.com/i6092467/vadesc/blob/main/documents/VaDeSC_Poster_ICLR_2022.pdf).
 
-### Contents
+### 🔎 Contents
 
 - [Motivation](#motivation)  
 - [Method](#method)
@@ -23,11 +23,11 @@ latent representations from the Gaussian mixture learnt by VaDeSC and (ii) decod
 </p>
 <img align="right" src="https://user-images.githubusercontent.com/32577028/153891639-ecc481c3-3652-47b9-aa31-3d2880d53858.png" width="300" />  
 
-### Motivation
+### 🦸‍♀ Motivation
 
 In this work, we study the problem of clustering survival data — a challenging and so far under-explored task. The figure on the right schematically depicts this clustering problem: here, the overall patient population consists of three groups characterised by different associations between the covariates and survival, resulting in disparate clinical conditions. The survival distributions do not need to differ between clusters: compare groups 1 and 3. The identification of such patient subpopulations could, for example, facilitate a better understanding of a disease and a more personalised disease management. 
 
-### Method
+### 💡 Method
 
 <img align="right" src="https://user-images.githubusercontent.com/32577028/153889328-bd437e81-551b-4ef7-af24-85d6adbc2c01.png" width="300" />
 
@@ -37,7 +37,7 @@ a schematic summary of the proposed approach: the input vector <img src="https:/
 a VAE regularised by a Gaussian mixture prior. The survival density function is given by a mixture of Weibull
 distributions with cluster-specific parameters <img src="https://render.githubusercontent.com/render/math?math=\boldsymbol{\beta}">. The parameters of the Gaussian mixture and the Weibull distributions are then optimised jointly using both the explanatory input variables and survival outcomes.
 
-### Requirements
+### 📝 Requirements
 
 All required libraries are included in the conda environment specified by [`environment.yml`](https://github.com/i6092467/vadesc/blob/main/environment.yml). To install and activate it, follow the instructions below:
 
@@ -46,7 +46,7 @@ conda env create -f environment.yml         # install dependencies
 conda activate Survival_Cluster_Analysis    # activate environment
 ```
 
-### Usage
+### 🔨 Usage
 
 File [`main.py`](https://github.com/i6092467/vadesc/blob/main/main.py) trains and evaluates the VaDeSC model. It accepts following arguments:
 
@@ -92,19 +92,19 @@ Folder [`/configs`](https://github.com/i6092467/vadesc/tree/main/configs) contai
 
 The VaDeSC model is implemented in [`/models/model.py`](https://github.com/i6092467/vadesc/blob/main/models/model.py). Encoder and decoder architectures are specified in [`/models/networks.py`](https://github.com/i6092467/vadesc/blob/main/models/networks.py). Data loaders are provided in the [`/datasets`](https://github.com/i6092467/vadesc/tree/main/datasets) folder. HGG, Hemodialysis, and NSCLC datasets are not included in the repository due to the medical confidentiality. Code for *post hoc* explanations of cluster assignments is available in the [`/post_hoc_explanations`](https://github.com/i6092467/vadesc/tree/main/posthoc_explanations) folder.
 
-**Feeling lost? 🆘** Follow [this Jupyter notebook](https://github.com/i6092467/vadesc/blob/main/notebooks/example.ipynb) to get started!
+**🆘 Feeling lost?** Follow [this Jupyter notebook](https://github.com/i6092467/vadesc/blob/main/notebooks/example.ipynb) to get started!
 
-### Acknowledgements
+### 🤝 Acknowledgements
 
 - survMNIST code is based on [Sebastian Pölsterl's tutorial](https://github.com/sebp/survival-cnn-estimator)
 - SUPPORT and FLChain datasets and utility functions for data preprocessing were taken from Chapfuwa *et al.*'s [SCA repository](https://github.com/paidamoyo/survival_cluster_analysis) and Nagpal *et al.*'s [DCM repository](https://github.com/chiragnagpal/deep_cox_mixtures)
 
-### Maintainers
+### 📭 Maintainers
 
 - Laura Manduchi ([laura.manduchi@inf.ethz.ch](mailto:laura.manduchi@inf.ethz.ch))
 - Ričards Marcinkevičs ([ricards.marcinkevics@inf.ethz.ch](mailto:ricards.marcinkevics@inf.ethz.ch))
 
-### References
+### 📚 References
 
 Below are some references helpful for understanding our method:
 - E. Bair and R. Tibshirani. Semi-supervised methods to predict patient survival from gene expression data. *PLoS Biology*, 2(4):e108, 2004.
