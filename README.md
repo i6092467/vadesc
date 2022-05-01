@@ -4,7 +4,7 @@ This repository holds the official code for the paper "[*A Deep Variational Appr
 
 ### 🔎 Contents
 
-- [Motivation](#🦸‍♀ motivation)  
+- [Motivation](#🦸‍♀motivation)  
 - [Method](#method)
 - [Requirements](#requirements)
 - [Usage](#usage)
