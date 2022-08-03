@@ -34,6 +34,7 @@ All required libraries are included in the conda environment specified by [`envi
 conda env create -f environment.yml         # install dependencies
 conda activate Survival_Cluster_Analysis    # activate environment
 ```
+**Note**: you might need to reboot after creating the environment!
 
 ### 🔨 Usage
 
