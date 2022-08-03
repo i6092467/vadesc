@@ -259,15 +259,10 @@ dependencies:
     - tabulate==0.8.9
     - tensorboard==2.4.1
     - tensorboard-logger==0.1.0
-    - tensorflow==2.4.0rc0
+    - tensorflow==2.4.0
     - tensorflow-determinism==0.3.0
-    - tensorflow-gpu==2.4.0rc0
-    - tensorflow-gpu-estimator==2.3.0
     - tensorflow-metadata==0.26.0
     - tensorflow-probability==0.12.1
-    - tf-estimator-nightly==2.5.0.dev2021011701
-    - tf-nightly-gpu==2.5.0.dev20210114
-    - tfds-nightly==4.1.0.dev202101050107
     - theano==1.0.5
     - torch==1.7.1
     - tqdm==4.55.1
